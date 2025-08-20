@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -13,7 +14,13 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@assets/*": ["src/assets/*"],
+      "@environments/*": ["src/environments/*"],
+      "@services/*": ["src/app/core/services/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -30,11 +37,6 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ],
-  "paths": {
-    "@app/*": ["src/app/*"],
-    "@assets/*": ["src/assets/*"],
-    "@environments/*": ["src/environments/*"],
-    "@services/*": ["src/app/core/services/*"]
-  }
+  ]
+  // moved to compilerOptions.paths
 }
