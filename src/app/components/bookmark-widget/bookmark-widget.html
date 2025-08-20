@@ -1,96 +1,91 @@
 <div class="bookmark-widget">
   <!-- Add Bookmark Form - Always Visible -->
   <div class="add-bookmark-form">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>URL *</mat-label>
+    <div class="form-group">
+      <label for="bookmark-url">URL *</label>
       <input
-        matInput
+        id="bookmark-url"
         type="url"
+        class="form-control"
         placeholder="Paste URL here..."
         [value]="bookmarkForm().url"
         (input)="updateFormField('url', $any($event.target).value)"
         (paste)="onUrlPaste($event)"
         required
       />
-      <mat-icon matPrefix>link</mat-icon>
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Title *</mat-label>
+    <div class="form-group">
+      <label for="bookmark-title">Title *</label>
       <input
-        matInput
+        id="bookmark-title"
         type="text"
+        class="form-control"
         placeholder="Bookmark title"
         [value]="bookmarkForm().title"
         (input)="updateFormField('title', $any($event.target).value)"
         required
       />
-      <mat-icon matPrefix>title</mat-icon>
-    </mat-form-field>
-
-    <div class="folder-input-group">
-      <mat-form-field appearance="outline" class="folder-select">
-        <mat-label>Folder</mat-label>
-        <mat-select
-          [value]="bookmarkForm().folder"
-          (selectionChange)="updateFormField('folder', $event.value || '')"
-        >
-          <mat-option value="">No folder</mat-option>
-          @for (folder of folders(); track folder.id) {
-          <mat-option [value]="folder.name">{{ folder.name }}</mat-option>
-          }
-        </mat-select>
-        <mat-icon matPrefix>folder</mat-icon>
-      </mat-form-field>
-      <button
-        mat-icon-button
-        type="button"
-        class="btn-new-folder"
-        (click)="showCreateFolder.set(true)"
-        title="Create new folder"
-      >
-        <mat-icon>create_new_folder</mat-icon>
-      </button>
     </div>
+
+    <div class="form-group">
+      <label for="bookmark-folder">Folder</label>
+      <div class="folder-input-group">
+        <select
+          id="bookmark-folder"
+          class="form-control"
+          [value]="bookmarkForm().folder"
+          (change)="onFolderChange($event)"
+        >
+          <option value="">No folder</option>
+          @for (folder of folders(); track folder.id) {
+          <option [value]="folder.name">{{ folder.name }}</option>
+          }
+        </select>
+        <button
+          type="button"
+          class="btn-new-folder"
+          (click)="showCreateFolder.set(true)"
+          title="Create new folder"
+        >
+          <i class="bi bi-folder-plus"></i>
+        </button>
+      </div>
 
       <!-- Create New Folder -->
       @if (showCreateFolder()) {
       <div class="new-folder-input">
-        <mat-form-field appearance="outline" class="folder-name-input">
-          <mat-label>Folder name</mat-label>
-          <input
-            matInput
-            type="text"
-            placeholder="Enter folder name"
-            [value]="newFolderName()"
-            (input)="newFolderName.set($any($event.target).value)"
-            (keydown.enter)="createFolder()"
-          />
-        </mat-form-field>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Folder name"
+          [value]="newFolderName()"
+          (input)="newFolderName.set($any($event.target).value)"
+          (keydown.enter)="createFolder()"
+        />
         <div class="folder-actions">
-          <button mat-icon-button type="button" color="primary" (click)="createFolder()">
-            <mat-icon>check</mat-icon>
+          <button type="button" class="btn-folder-action" (click)="createFolder()">
+            <i class="bi bi-check"></i>
           </button>
-          <button mat-icon-button type="button" color="warn" (click)="showCreateFolder.set(false)">
-            <mat-icon>close</mat-icon>
+          <button type="button" class="btn-folder-action cancel" (click)="showCreateFolder.set(false)">
+            <i class="bi bi-x"></i>
           </button>
         </div>
       </div>
       }
+    </div>
 
     <div class="form-actions">
       <button
-        mat-raised-button
-        color="primary"
         type="button"
         class="btn-save"
         (click)="addBookmark()"
         [disabled]="isLoading() || !bookmarkForm().title.trim() || !bookmarkForm().url.trim()"
       >
         @if (isLoading()) {
-        <mat-icon class="spinner">refresh</mat-icon>
+        <span class="spinner"></span>
         } @else {
-        <mat-icon>bookmark_add</mat-icon>
+        <i class="bi bi-bookmark-plus"></i>
         }
         <span>{{ isLoading() ? 'Saving...' : 'Save Bookmark' }}</span>
       </button>
@@ -128,7 +123,7 @@
           (click)="deleteBookmark(bookmark)"
           title="Delete bookmark"
         >
-          <mat-icon>delete</mat-icon>
+          <i class="bi bi-trash"></i>
         </button>
       </div>
       }
@@ -137,12 +132,12 @@
     <div class="view-all">
       <a routerLink="/bookmarks" class="btn-view-all">
         <span>View All Bookmarks</span>
-        <mat-icon>arrow_forward</mat-icon>
+        <i class="bi bi-arrow-right"></i>
       </a>
     </div>
     } @else {
     <div class="empty-state">
-      <mat-icon>bookmark_border</mat-icon>
+      <i class="bi bi-bookmark"></i>
       <p>No bookmarks yet</p>
       <small>Click the Add button to create your first bookmark</small>
     </div>
