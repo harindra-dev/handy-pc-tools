@@ -90,6 +90,35 @@
   }
 }
 
+// Angular Material Select Styling
+.folder-input-group mat-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  min-height: auto;
+
+  &:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+
+  ::ng-deep .mat-mdc-select-value {
+    color: #374151;
+  }
+
+  ::ng-deep .mat-mdc-select-placeholder {
+    color: #9ca3af;
+  }
+
+  ::ng-deep .mat-mdc-select-arrow {
+    color: #6b7280;
+  }
+}
+
 .folder-actions {
   display: flex;
   gap: 0.25rem;

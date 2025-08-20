@@ -31,17 +31,17 @@
     <div class="form-group">
       <label for="bookmark-folder">Folder</label>
       <div class="folder-input-group">
-        <select
+        <mat-select
           id="bookmark-folder"
           class="form-control"
           [value]="bookmarkForm().folder"
-          (change)="onFolderChange($event)"
+          (selectionChange)="updateFormField('folder', $event.value)"
         >
-          <option value="">No folder</option>
+          <mat-option value="">No folder</mat-option>
           @for (folder of folders(); track folder.id) {
-          <option [value]="folder.name">{{ folder.name }}</option>
+          <mat-option [value]="folder.name">{{ folder.name }}</mat-option>
           }
-        </select>
+        </mat-select>
         <button
           type="button"
           class="btn-new-folder"

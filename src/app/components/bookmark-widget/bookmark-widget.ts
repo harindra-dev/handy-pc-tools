@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BookmarkService } from '../../core/services/bookmark/bookmark.service';
@@ -10,7 +11,7 @@ import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 @Component({
   selector: 'app-bookmark-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmationDialog],
+  imports: [CommonModule, FormsModule, MatSelectModule, ConfirmationDialog],
   templateUrl: './bookmark-widget.html',
   styleUrl: './bookmark-widget.scss'
 })
