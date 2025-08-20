@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BookmarkService } from '../../core/services/bookmark/bookmark.service';
 import { Bookmark, BookmarkFolder } from '../../core/models/bookmark.model';
 
@@ -27,6 +29,9 @@ export class BookmarkWidget {
   readonly showCreateFolder = signal(false);
   readonly newFolderName = signal('');
 
+  // URL input debounce subject
+  private readonly urlInputSubject = new Subject<string>();
+
   // Get reactive data
   readonly bookmarks = this.bookmarkService.bookmarksSignal;
   readonly folders = this.bookmarkService.foldersSignal;
@@ -36,25 +41,74 @@ export class BookmarkWidget {
     return this.bookmarks().slice(0, 8);
   }
 
+  constructor() {
+    // Set up debounced URL input handling
+    this.urlInputSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(async (url) => {
+        await this.handleUrlInput(url);
+      });
+  }
+
+  // Handle URL input with auto-fetch title
+  async handleUrlInput(url: string): Promise<void> {
+    if (!url.trim()) {
+      return;
+    }
+
+    if (this.isValidUrl(url)) {
+      // Only auto-fetch if title is empty or matches a previous URL's domain
+      const currentTitle = this.bookmarkForm().title.trim();
+      const urlDomain = this.getDomainFromUrl(url);
+      
+      if (!currentTitle || currentTitle === urlDomain || this.isPreviouslyGeneratedTitle(currentTitle, url)) {
+        try {
+          const title = await this.extractTitleFromUrl(url);
+          if (title && title.trim()) {
+            this.bookmarkForm.update(form => ({ 
+              ...form, 
+              title: title.trim()
+            }));
+          } else {
+            // Fallback to domain name if title extraction fails
+            this.bookmarkForm.update(form => ({ 
+              ...form, 
+              title: urlDomain
+            }));
+          }
+        } catch {
+          // Fallback to domain name on error
+          this.bookmarkForm.update(form => ({ 
+            ...form, 
+            title: urlDomain
+          }));
+        }
+      }
+    }
+  }
+
+  // Check if the current title looks like it was previously auto-generated
+  private isPreviouslyGeneratedTitle(title: string, url: string): boolean {
+    const domain = this.getDomainFromUrl(url);
+    return title === domain || title.toLowerCase().includes(domain.toLowerCase());
+  }
+
+  // Handle URL input changes
+  onUrlInput(url: string): void {
+    this.bookmarkForm.update(form => ({ ...form, url }));
+    this.urlInputSubject.next(url);
+  }
+
   async onUrlPaste(event: ClipboardEvent): Promise<void> {
     event.preventDefault();
     const pastedText = event.clipboardData?.getData('text') || '';
     
-    if (this.isValidUrl(pastedText)) {
-      this.bookmarkForm.update(form => ({ ...form, url: pastedText }));
-      
-      // Try to extract title from URL if no title is provided
-      if (!this.bookmarkForm().title) {
-        try {
-          const title = await this.extractTitleFromUrl(pastedText);
-          this.bookmarkForm.update(form => ({ ...form, title: title || this.getDomainFromUrl(pastedText) }));
-        } catch {
-          this.bookmarkForm.update(form => ({ ...form, title: this.getDomainFromUrl(pastedText) }));
-        }
-      }
-    } else {
-      this.bookmarkForm.update(form => ({ ...form, url: pastedText }));
-    }
+    // Update URL and trigger auto-fetch
+    this.bookmarkForm.update(form => ({ ...form, url: pastedText }));
+    this.urlInputSubject.next(pastedText);
   }
 
   async addBookmark(): Promise<void> {

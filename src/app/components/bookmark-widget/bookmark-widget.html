@@ -9,7 +9,7 @@
         class="form-control"
         placeholder="Paste URL here..."
         [value]="bookmarkForm().url"
-        (input)="updateFormField('url', $any($event.target).value)"
+        (input)="onUrlInput($any($event.target).value)"
         (paste)="onUrlPaste($event)"
         required
       />
