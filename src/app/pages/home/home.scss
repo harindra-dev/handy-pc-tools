@@ -14,11 +14,11 @@
 
 .quick-tools-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 200px));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
   width: 100%;
   height: 100%;
-  justify-content: start;
+  justify-content: stretch;
   align-items: start;
 }
 
