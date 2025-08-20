@@ -42,8 +42,8 @@
 }
 
 ::ng-deep {
-  .editor-container {
+  ngx-monaco-diff-editor .editor-container {
     width: 100%;
-    height: 100%;
+    height: 100% !important;
   }
 }

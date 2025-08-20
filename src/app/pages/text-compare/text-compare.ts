@@ -29,8 +29,6 @@ export class TextCompare implements OnInit {
   isLoading = true;
   hasError = false;
   errorMessage = '';
-  private readonly appUtilsService = inject(AppUtils);
-  readonly isMonacoLoaderReady = this.appUtilsService.isMonacoLoaderReady;
 
   options = {
     renderSideBySide: true,
@@ -68,15 +66,29 @@ export class TextCompare implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Ensure Monaco is initialized
-    if (typeof (window as any).require !== 'undefined') {
-      (window as any).require.config(this.monacoConfig.requireConfig);
-      (window as any).require(['vs/editor/editor.main'], () => {
-        this.isLoading = false;
-      });
-    } else {
-      this.handleError('Monaco Editor loader.js is not loaded.');
-    }
+    // Ensure Monaco is initialized with retry and timeout
+    const maxRetries = 50; // Maximum number of retries (e.g., 50 retries)
+    const retryInterval = 200; // Retry interval in milliseconds (e.g., 200ms)
+    let retryCount = 0;
+
+    const checkLoader = () => {
+      if (typeof (window as any).require !== 'undefined') {
+        (window as any).require.config(this.monacoConfig.requireConfig);
+        (window as any).require(['vs/editor/editor.main'], () => {
+          this.isLoading = false;
+          this.hasError = false;
+        });
+      } else if (retryCount < maxRetries) {
+        retryCount++;
+        setTimeout(checkLoader, retryInterval);
+      } else {
+        this.handleError(
+          'Monaco Editor loader.js took too long to load. Please try refreshing the page.'
+        );
+      }
+    };
+
+    checkLoader();
 
     // Debounce model updates
     this.originalModelChange$.pipe(debounceTime(300)).subscribe((value) => {
@@ -121,6 +133,7 @@ export class TextCompare implements OnInit {
 
       // Editor is ready
       this.isLoading = false;
+      this.hasError = false;
     } catch (error) {
       this.handleError('An error occurred while initializing the editor');
       console.error('Editor initialization error:', error);
