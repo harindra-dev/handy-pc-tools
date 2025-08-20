@@ -3,6 +3,7 @@ import {
   Inject,
   OnInit,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import {
   MonacoEditorModule,
@@ -14,6 +15,7 @@ import { editor } from 'monaco-editor';
 import { CommonModule } from '@angular/common';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { AppUtils } from '../../core/services/app-utils/app-utils';
 
 @Component({
   selector: 'app-text-compare',
@@ -27,6 +29,8 @@ export class TextCompare implements OnInit {
   isLoading = true;
   hasError = false;
   errorMessage = '';
+  private readonly appUtilsService = inject(AppUtils);
+  readonly isMonacoLoaderReady = this.appUtilsService.isMonacoLoaderReady;
 
   options = {
     renderSideBySide: true,

@@ -11,6 +11,7 @@ import {
 } from 'ngx-monaco-editor-v2';
 
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: '/assets/monaco',
@@ -37,5 +38,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     ...monacoProviders,
+    provideHttpClient(),
   ],
 };

@@ -1,9 +1,12 @@
+@defer (when isMonacoLoaderReady()) {
 <div class="text-compare-container">
-  <div *ngIf="isLoading" class="loading-indicator">Loading editor...</div>
-
-  <div *ngIf="hasError" class="error-message">
+  @if(isLoading) {
+  <div class="loading-indicator">Loading editor...</div>
+  } @if(hasError) {
+  <div class="error-message">
     {{ errorMessage }}
   </div>
+  }
 
   <div
     [style.display]="!isLoading && !hasError ? 'block' : 'none'"
@@ -19,3 +22,5 @@
     </ngx-monaco-diff-editor>
   </div>
 </div>
+
+}

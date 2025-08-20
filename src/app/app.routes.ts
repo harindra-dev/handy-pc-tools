@@ -8,27 +8,27 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () => import('./home/home').then((m) => m.Home),
+    loadComponent: () => import('./pages/home/home').then((m) => m.Home),
   },
   {
     path: 'about',
-    loadComponent: () => import('./about/about').then((m) => m.About),
+    loadComponent: () => import('./pages/about/about').then((m) => m.About),
   },
   // text-compare
   {
     path: 'text-compare',
     loadComponent: () =>
-      import('./text-compare/text-compare').then((m) => m.TextCompare),
+      import('./pages/text-compare/text-compare').then((m) => m.TextCompare),
   },
   // notes-list
   {
     path: 'notes-list',
-    loadComponent: () => import('./notes/notes').then((m) => m.Notes),
+    loadComponent: () => import('./pages/notes/notes').then((m) => m.Notes),
   },
   // bookmarks
   {
     path: 'bookmarks',
     loadComponent: () =>
-      import('./bookmarks/bookmarks').then((m) => m.Bookmarks),
+      import('./pages/bookmarks/bookmarks').then((m) => m.Bookmarks),
   },
 ];

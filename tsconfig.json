@@ -30,5 +30,11 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "paths": {
+    "@app/*": ["src/app/*"],
+    "@assets/*": ["src/assets/*"],
+    "@environments/*": ["src/environments/*"],
+    "@services/*": ["src/app/core/services/*"]
+  }
 }
