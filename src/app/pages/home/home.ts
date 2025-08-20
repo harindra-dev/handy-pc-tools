@@ -7,7 +7,6 @@ import { BookmarkWidget } from '../../components/bookmark-widget/bookmark-widget
 @Component({
   selector: 'app-home',
   imports: [MatRippleModule, RouterLink, BookmarkWidget],
-  imports: [BookmarkWidget],
   styleUrl: './home.scss',
 })
 export class Home {}
