@@ -45,7 +45,7 @@ export class BookmarkWidget {
     // Set up debounced URL input handling
     this.urlInputSubject
       .pipe(
-        debounceTime(300),
+        debounceTime(600),
         distinctUntilChanged()
       )
       .subscribe(async (url) => {
@@ -59,33 +59,36 @@ export class BookmarkWidget {
       return;
     }
 
-    if (this.isValidUrl(url)) {
-      // Only auto-fetch if title is empty or matches a previous URL's domain
-      const currentTitle = this.bookmarkForm().title.trim();
-      const urlDomain = this.getDomainFromUrl(url);
-      
-      if (!currentTitle || currentTitle === urlDomain || this.isPreviouslyGeneratedTitle(currentTitle, url)) {
-        try {
-          const title = await this.extractTitleFromUrl(url);
-          if (title && title.trim()) {
-            this.bookmarkForm.update(form => ({ 
-              ...form, 
-              title: title.trim()
-            }));
-          } else {
-            // Fallback to domain name if title extraction fails
-            this.bookmarkForm.update(form => ({ 
-              ...form, 
-              title: urlDomain
-            }));
-          }
-        } catch {
+    // Only proceed if URL is valid
+    if (!this.isValidUrl(url)) {
+      return;
+    }
+
+    // Only auto-fetch if title is empty or matches a previous URL's domain
+    const currentTitle = this.bookmarkForm().title.trim();
+    const urlDomain = this.getDomainFromUrl(url);
+    
+    if (!currentTitle || currentTitle === urlDomain || this.isPreviouslyGeneratedTitle(currentTitle, url)) {
+      try {
+        const title = await this.extractTitleFromUrl(url);
+        if (title && title.trim()) {
+          this.bookmarkForm.update(form => ({ 
+            ...form, 
+            title: title.trim()
+          }));
+        } else {
           // Fallback to domain name on error
           this.bookmarkForm.update(form => ({ 
             ...form, 
             title: urlDomain
           }));
         }
+      } catch {
+        // Fallback to domain name on error
+        this.bookmarkForm.update(form => ({ 
+          ...form, 
+          title: urlDomain
+        }));
       }
     }
   }
