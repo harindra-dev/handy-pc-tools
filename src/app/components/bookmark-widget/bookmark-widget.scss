@@ -93,30 +93,56 @@
 // Angular Material Select Styling
 .folder-input-group mat-select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  background: white;
-  min-height: auto;
+  
+  ::ng-deep .mat-mdc-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: white;
+    min-height: auto;
+    line-height: 1.25;
 
-  &:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-  }
+    .mat-mdc-select-trigger {
+      height: auto;
+      min-height: auto;
+    }
 
-  ::ng-deep .mat-mdc-select-value {
-    color: #374151;
-  }
+    .mat-mdc-select-value {
+      color: #374151;
+      font-size: 0.875rem;
+    }
 
-  ::ng-deep .mat-mdc-select-placeholder {
-    color: #9ca3af;
-  }
+    .mat-mdc-select-placeholder {
+      color: #9ca3af;
+    }
 
-  ::ng-deep .mat-mdc-select-arrow {
-    color: #6b7280;
+    .mat-mdc-select-arrow-wrapper {
+      transform: translateY(0);
+    }
+
+    .mat-mdc-select-arrow {
+      color: #6b7280;
+    }
+
+    &.mat-mdc-select-focused {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
   }
+}
+
+// Fix dropdown overlay positioning
+::ng-deep .mat-mdc-select-panel {
+  border-radius: 6px !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 4px !important;
+}
+
+::ng-deep .cdk-overlay-pane {
+  transform: translateX(0) !important;
 }
 
 .folder-actions {
