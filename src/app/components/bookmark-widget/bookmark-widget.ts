@@ -187,7 +187,7 @@ export class BookmarkWidget {
     this.bookmarkForm.update(form => ({ ...form, folder: target.value }));
   }
 
-  updateFormField(field: keyof typeof this.bookmarkForm.value, value: string): void {
+  updateFormField(field: keyof ReturnType<typeof this.bookmarkForm>, value: string): void {
     this.bookmarkForm.update(form => ({ ...form, [field]: value }));
   }
 }
