@@ -1,1 +1,21 @@
-<p>text-compare works!</p>
+<div class="text-compare-container">
+  <div *ngIf="isLoading" class="loading-indicator">Loading editor...</div>
+
+  <div *ngIf="hasError" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div
+    [style.display]="!isLoading && !hasError ? 'block' : 'none'"
+    class="editor-container"
+  >
+    <ngx-monaco-diff-editor
+      [options]="options"
+      [originalModel]="originalModel"
+      [modifiedModel]="modifiedModel"
+      (onInit)="onInit($event)"
+      class="diff-editor"
+    >
+    </ngx-monaco-diff-editor>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+.text-compare-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  width: 100%;
+  max-width: 1900px;
+  margin: 0px auto;
+  padding: 16px;
+  box-sizing: border-box;
+  color: #ffffff;
+
+  .loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.2rem;
+  }
+
+  .error-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #ff6b6b;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .editor-container {
+    flex: 1;
+    height: calc(100vh - 32px);
+    min-height: 500px;
+    border: 1px solid #404040;
+
+    .diff-editor {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+::ng-deep {
+  .editor-container {
+    width: 100%;
+    height: 100%;
+  }
+}
