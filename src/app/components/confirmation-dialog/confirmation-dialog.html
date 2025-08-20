@@ -1,0 +1,47 @@
+@if (isOpen) {
+<div class="dialog-overlay" (click)="onBackdropClick($event)">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <div class="dialog-icon" [ngClass]="type">
+        @switch (type) {
+          @case ('error') {
+            <i class="bi bi-exclamation-triangle"></i>
+          }
+          @case ('warning') {
+            <i class="bi bi-exclamation-circle"></i>
+          }
+          @default {
+            <i class="bi bi-question-circle"></i>
+          }
+        }
+      </div>
+      <h3 class="dialog-title">{{ title }}</h3>
+    </div>
+    
+    <div class="dialog-body">
+      <p class="dialog-message">{{ message }}</p>
+    </div>
+    
+    <div class="dialog-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onCancel()"
+      >
+        {{ cancelText }}
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        [ngClass]="{
+          'btn-danger': type === 'error',
+          'btn-warning': type === 'warning'
+        }"
+        (click)="onConfirm()"
+      >
+        {{ confirmText }}
+      </button>
+    </div>
+  </div>
+</div>
+}

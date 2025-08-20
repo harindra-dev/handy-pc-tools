@@ -144,3 +144,16 @@
     }
   </div>
 </div>
+
+<!-- Confirmation Dialog -->
+<app-confirmation-dialog
+  [isOpen]="confirmDialog().isOpen"
+  [title]="confirmDialog().title"
+  [message]="confirmDialog().message"
+  [type]="confirmDialog().type"
+  [confirmText]="confirmDialog().confirmText"
+  [cancelText]="confirmDialog().cancelText"
+  (confirmed)="onDialogConfirmed()"
+  (cancelled)="onDialogCancelled()"
+  (closed)="onDialogClosed()"
+></app-confirmation-dialog>

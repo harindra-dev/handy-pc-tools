@@ -5,11 +5,12 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BookmarkService } from '../../core/services/bookmark/bookmark.service';
 import { Bookmark, BookmarkFolder } from '../../core/models/bookmark.model';
+import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-bookmark-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmationDialog],
   templateUrl: './bookmark-widget.html',
   styleUrl: './bookmark-widget.scss'
 })
@@ -28,6 +29,17 @@ export class BookmarkWidget {
   readonly isLoading = signal(false);
   readonly showCreateFolder = signal(false);
   readonly newFolderName = signal('');
+
+  // Confirmation dialog state
+  readonly confirmDialog = signal({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'confirm' as 'confirm' | 'error' | 'warning',
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    action: null as (() => Promise<void>) | null
+  });
 
   // URL input debounce subject
   private readonly urlInputSubject = new Subject<string>();
@@ -122,7 +134,7 @@ export class BookmarkWidget {
     }
 
     if (!this.isValidUrl(form.url)) {
-      alert('Please enter a valid URL');
+      this.showErrorDialog('Invalid URL', 'Please enter a valid URL');
       return;
     }
 
@@ -142,7 +154,7 @@ export class BookmarkWidget {
       this.resetForm();
     } catch (error) {
       console.error('Error adding bookmark:', error);
-      alert('Failed to add bookmark. Please try again.');
+      this.showErrorDialog('Error', 'Failed to add bookmark. Please try again.');
     } finally {
       this.isLoading.set(false);
     }
@@ -158,7 +170,7 @@ export class BookmarkWidget {
     // Check if folder already exists
     const existingFolder = this.folders().find(f => f.name.toLowerCase() === folderName.toLowerCase());
     if (existingFolder) {
-      alert('Folder already exists');
+      this.showErrorDialog('Folder Exists', 'A folder with this name already exists');
       return;
     }
 
@@ -171,21 +183,27 @@ export class BookmarkWidget {
       this.bookmarkForm.update(form => ({ ...form, folder: folderName }));
     } catch (error) {
       console.error('Error creating folder:', error);
-      alert('Failed to create folder. Please try again.');
+      this.showErrorDialog('Error', 'Failed to create folder. Please try again.');
     }
   }
 
   async deleteBookmark(bookmark: Bookmark): Promise<void> {
     if (!bookmark.id) return;
     
-    if (confirm(`Are you sure you want to delete "${bookmark.title}"?`)) {
-      try {
-        await this.bookmarkService.deleteBookmark(bookmark.id);
-      } catch (error) {
-        console.error('Error deleting bookmark:', error);
-        alert('Failed to delete bookmark. Please try again.');
+    this.showConfirmDialog(
+      'Delete Bookmark',
+      `Are you sure you want to delete "${bookmark.title}"?`,
+      'Delete',
+      'error',
+      async () => {
+        try {
+          await this.bookmarkService.deleteBookmark(bookmark.id!);
+        } catch (error) {
+          console.error('Error deleting bookmark:', error);
+          this.showErrorDialog('Error', 'Failed to delete bookmark. Please try again.');
+        }
       }
-    }
+    );
   }
 
   async openBookmark(bookmark: Bookmark): Promise<void> {
@@ -199,6 +217,52 @@ export class BookmarkWidget {
     }
     
     window.open(bookmark.url, '_blank');
+  }
+
+  // Confirmation dialog methods
+  private showConfirmDialog(
+    title: string,
+    message: string,
+    confirmText: string = 'Confirm',
+    type: 'confirm' | 'error' | 'warning' = 'confirm',
+    action: (() => Promise<void>) | null = null
+  ): void {
+    this.confirmDialog.set({
+      isOpen: true,
+      title,
+      message,
+      type,
+      confirmText,
+      cancelText: 'Cancel',
+      action
+    });
+  }
+
+  private showErrorDialog(title: string, message: string): void {
+    this.confirmDialog.set({
+      isOpen: true,
+      title,
+      message,
+      type: 'error',
+      confirmText: 'OK',
+      cancelText: '',
+      action: null
+    });
+  }
+
+  onDialogConfirmed(): void {
+    const dialog = this.confirmDialog();
+    if (dialog.action) {
+      dialog.action();
+    }
+  }
+
+  onDialogCancelled(): void {
+    // Just close the dialog
+  }
+
+  onDialogClosed(): void {
+    this.confirmDialog.update(dialog => ({ ...dialog, isOpen: false }));
   }
 
   private resetForm(): void {
