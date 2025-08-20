@@ -1,0 +1,161 @@
+<div class="bookmark-widget">
+  <!-- Header -->
+  <div class="widget-header">
+    <h3 class="widget-title">Quick Bookmarks</h3>
+    <button 
+      class="btn-add-bookmark"
+      (click)="toggleAddForm()"
+      [class.active]="showAddForm()"
+    >
+      <i class="bi" [class.bi-plus]="!showAddForm()" [class.bi-x]="showAddForm()"></i>
+      <span>{{ showAddForm() ? 'Cancel' : 'Add' }}</span>
+    </button>
+  </div>
+
+  <!-- Add Bookmark Form -->
+  @if (showAddForm()) {
+  <div class="add-bookmark-form">
+    <div class="form-group">
+      <label for="bookmark-url">URL *</label>
+      <input
+        id="bookmark-url"
+        type="url"
+        class="form-control"
+        placeholder="Paste URL here..."
+        [value]="bookmarkForm().url"
+        (input)="updateFormField('url', $any($event.target).value)"
+        (paste)="onUrlPaste($event)"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="bookmark-title">Title *</label>
+      <input
+        id="bookmark-title"
+        type="text"
+        class="form-control"
+        placeholder="Bookmark title"
+        [value]="bookmarkForm().title"
+        (input)="updateFormField('title', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="bookmark-folder">Folder</label>
+      <div class="folder-input-group">
+        <select
+          id="bookmark-folder"
+          class="form-control"
+          [value]="bookmarkForm().folder"
+          (change)="onFolderChange($event)"
+        >
+          <option value="">No folder</option>
+          @for (folder of folders(); track folder.id) {
+          <option [value]="folder.name">{{ folder.name }}</option>
+          }
+        </select>
+        <button
+          type="button"
+          class="btn-new-folder"
+          (click)="showCreateFolder.set(true)"
+          title="Create new folder"
+        >
+          <i class="bi bi-folder-plus"></i>
+        </button>
+      </div>
+
+      <!-- Create New Folder -->
+      @if (showCreateFolder()) {
+      <div class="new-folder-input">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Folder name"
+          [value]="newFolderName()"
+          (input)="newFolderName.set($any($event.target).value)"
+          (keydown.enter)="createFolder()"
+        />
+        <div class="folder-actions">
+          <button type="button" class="btn-folder-action" (click)="createFolder()">
+            <i class="bi bi-check"></i>
+          </button>
+          <button type="button" class="btn-folder-action cancel" (click)="showCreateFolder.set(false)">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-save"
+        (click)="addBookmark()"
+        [disabled]="isLoading() || !bookmarkForm().title.trim() || !bookmarkForm().url.trim()"
+      >
+        @if (isLoading()) {
+        <span class="spinner"></span>
+        } @else {
+        <i class="bi bi-bookmark-plus"></i>
+        }
+        <span>{{ isLoading() ? 'Saving...' : 'Save Bookmark' }}</span>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Recent Bookmarks -->
+  <div class="recent-bookmarks">
+    @if (recentBookmarks.length > 0) {
+    <h4 class="section-title">Recent Bookmarks</h4>
+    <div class="bookmark-list">
+      @for (bookmark of recentBookmarks; track bookmark.id) {
+      <div class="bookmark-item">
+        <div class="bookmark-content" (click)="openBookmark(bookmark.url)">
+          <div class="bookmark-favicon">
+            @if (bookmark.favicon) {
+            <img [src]="bookmark.favicon" [alt]="bookmark.title" />
+            } @else {
+            <i class="bi bi-globe"></i>
+            }
+          </div>
+          <div class="bookmark-info">
+            <div class="bookmark-title">{{ bookmark.title }}</div>
+            <div class="bookmark-url">{{ bookmark.url }}</div>
+            @if (bookmark.folder) {
+            <div class="bookmark-folder">
+              <i class="bi bi-folder"></i>
+              <span>{{ bookmark.folder }}</span>
+            </div>
+            }
+          </div>
+        </div>
+        <button
+          class="btn-delete"
+          (click)="deleteBookmark(bookmark)"
+          title="Delete bookmark"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+      }
+    </div>
+
+    <div class="view-all">
+      <a routerLink="/bookmarks" class="btn-view-all">
+        <span>View All Bookmarks</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    } @else {
+    <div class="empty-state">
+      <i class="bi bi-bookmark"></i>
+      <p>No bookmarks yet</p>
+      <small>Click the Add button to create your first bookmark</small>
+    </div>
+    }
+  </div>
+</div>

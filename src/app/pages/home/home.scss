@@ -1,8 +1,15 @@
 .quick-tools-heading,
-.bookmarks-heading {
+.bookmarks-heading,
+:host ::ng-deep .bookmark-widget .widget-title {
   font-size: 1.125rem;
   font-weight: 500;
   margin-bottom: 1.5rem;
+}
+
+// Ensure bookmark widget takes full height
+:host ::ng-deep app-bookmark-widget {
+  display: block;
+  height: 100%;
 }
 
 .quick-tools-container {
