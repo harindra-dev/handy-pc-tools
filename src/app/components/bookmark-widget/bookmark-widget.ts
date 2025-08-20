@@ -36,13 +36,6 @@ export class BookmarkWidget {
     return this.bookmarks().slice(0, 5);
   }
 
-  toggleAddForm(): void {
-    this.showAddForm.update(show => !show);
-    if (!this.showAddForm()) {
-      this.resetForm();
-    }
-  }
-
   async onUrlPaste(event: ClipboardEvent): Promise<void> {
     event.preventDefault();
     const pastedText = event.clipboardData?.getData('text') || '';
@@ -90,7 +83,6 @@ export class BookmarkWidget {
       });
 
       this.resetForm();
-      this.showAddForm.set(false);
     } catch (error) {
       console.error('Error adding bookmark:', error);
       alert('Failed to add bookmark. Please try again.');

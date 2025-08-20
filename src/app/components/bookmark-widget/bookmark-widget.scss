@@ -7,60 +7,21 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0;
 }
 
-.widget-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  background: #fafbfc;
-}
-
-.widget-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.btn-add-bookmark {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
+.quick-bookmarks-heading {
+  font-size: 1.125rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #4338ca;
-  }
-
-  &.active {
-    background: #dc2626;
-
-    &:hover {
-      background: #b91c1c;
-    }
-  }
-
-  i {
-    font-size: 0.875rem;
-  }
+  margin: 0 0 1.5rem 0;
+  padding: 1.5rem 1.5rem 0;
+  color: #111827;
 }
 
 // Add Bookmark Form
 .add-bookmark-form {
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
   border-bottom: 1px solid #f3f4f6;
-  background: #f9fafb;
 }
 
 .form-group {

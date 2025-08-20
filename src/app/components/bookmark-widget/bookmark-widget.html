@@ -1,19 +1,8 @@
 <div class="bookmark-widget">
   <!-- Header -->
-  <div class="widget-header">
-    <h3 class="widget-title">Quick Bookmarks</h3>
-    <button 
-      class="btn-add-bookmark"
-      (click)="toggleAddForm()"
-      [class.active]="showAddForm()"
-    >
-      <i class="bi" [class.bi-plus]="!showAddForm()" [class.bi-x]="showAddForm()"></i>
-      <span>{{ showAddForm() ? 'Cancel' : 'Add' }}</span>
-    </button>
-  </div>
+  <h2 class="quick-bookmarks-heading">Quick Bookmarks</h2>
 
-  <!-- Add Bookmark Form -->
-  @if (showAddForm()) {
+  <!-- Add Bookmark Form - Always Visible -->
   <div class="add-bookmark-form">
     <div class="form-group">
       <label for="bookmark-url">URL *</label>
@@ -105,7 +94,6 @@
       </button>
     </div>
   </div>
-  }
 
   <!-- Recent Bookmarks -->
   <div class="recent-bookmarks">
