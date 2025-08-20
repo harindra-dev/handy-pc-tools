@@ -53,7 +53,8 @@ export class BookmarkService {
             autoIncrement: false,
           });
           bookmarkStore.createIndex('folder', 'folder', { unique: false });
-          bookmarkStore.createIndex('dateCreated', 'dateCreated', { unique: false });
+          bookmarkStore.createIndex('created', 'created', { unique: false });
+          bookmarkStore.createIndex('lastAccessed', 'lastAccessed', { unique: false });
         }
 
         // Create folders store
@@ -79,13 +80,15 @@ export class BookmarkService {
   }
 
   // Bookmark CRUD Operations
-  async addBookmark(bookmark: Omit<Bookmark, 'id' | 'dateCreated' | 'dateModified'>): Promise<Bookmark> {
+  async addBookmark(bookmark: Omit<Bookmark, 'id' | 'created' | 'lastUpdated' | 'lastAccessed'>): Promise<Bookmark> {
     const db = await this.getDatabase();
+    const now = new Date();
     const newBookmark: Bookmark = {
       ...bookmark,
       id: this.generateId(),
-      dateCreated: new Date(),
-      dateModified: new Date(),
+      created: now,
+      lastUpdated: now,
+      lastAccessed: now,
     };
 
     return new Promise((resolve, reject) => {
@@ -105,7 +108,7 @@ export class BookmarkService {
     const db = await this.getDatabase();
     const updatedBookmark = {
       ...bookmark,
-      dateModified: new Date(),
+      lastUpdated: new Date(),
     };
 
     return new Promise((resolve, reject) => {
@@ -133,6 +136,33 @@ export class BookmarkService {
       request.onsuccess = () => {
         this.loadBookmarks();
         resolve();
+      };
+    });
+  }
+
+  async updateLastAccessed(id: string): Promise<void> {
+    const db = await this.getDatabase();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([this.bookmarksStoreName], 'readwrite');
+      const store = transaction.objectStore(this.bookmarksStoreName);
+      const getRequest = store.get(id);
+
+      getRequest.onerror = () => reject(getRequest.error);
+      getRequest.onsuccess = () => {
+        const bookmark = getRequest.result as Bookmark;
+        if (bookmark) {
+          bookmark.lastAccessed = new Date();
+          const putRequest = store.put(bookmark);
+          
+          putRequest.onerror = () => reject(putRequest.error);
+          putRequest.onsuccess = () => {
+            this.loadBookmarks();
+            resolve();
+          };
+        } else {
+          resolve();
+        }
       };
     });
   }
@@ -206,8 +236,8 @@ export class BookmarkService {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const bookmarks = request.result as Bookmark[];
-        // Sort by date created (most recent first)
-        bookmarks.sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
+        // Sort by last accessed (most recent first)
+        bookmarks.sort((a, b) => new Date(b.lastAccessed).getTime() - new Date(a.lastAccessed).getTime());
         
         this.bookmarksSubject.next(bookmarks);
         this.bookmarksSignal.set(bookmarks);
@@ -227,7 +257,7 @@ export class BookmarkService {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const folders = request.result as BookmarkFolder[];
-        folders.sort((a, b) => a.name.localeCompare(b.name));
+        folders.sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
         
         this.foldersSubject.next(folders);
         this.foldersSignal.set(folders);

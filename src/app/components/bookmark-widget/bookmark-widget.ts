@@ -33,7 +33,7 @@ export class BookmarkWidget {
 
   // Display recent bookmarks (limit to 5)
   get recentBookmarks(): Bookmark[] {
-    return this.bookmarks().slice(0, 5);
+    return this.bookmarks().slice(0, 8);
   }
 
   async onUrlPaste(event: ClipboardEvent): Promise<void> {
@@ -131,8 +131,17 @@ export class BookmarkWidget {
     }
   }
 
-  openBookmark(url: string): void {
-    window.open(url, '_blank');
+  async openBookmark(bookmark: Bookmark): Promise<void> {
+    // Update last accessed timestamp
+    if (bookmark.id) {
+      try {
+        await this.bookmarkService.updateLastAccessed(bookmark.id);
+      } catch (error) {
+        console.error('Error updating last accessed:', error);
+      }
+    }
+    
+    window.open(bookmark.url, '_blank');
   }
 
   private resetForm(): void {

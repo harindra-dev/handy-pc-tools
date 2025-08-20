@@ -99,7 +99,7 @@
     <div class="bookmark-list">
       @for (bookmark of recentBookmarks; track bookmark.id) {
       <div class="bookmark-item">
-        <div class="bookmark-content" (click)="openBookmark(bookmark.url)">
+        <div class="bookmark-content" (click)="openBookmark(bookmark)">
           <div class="bookmark-favicon">
             @if (bookmark.favicon) {
             <img [src]="bookmark.favicon" [alt]="bookmark.title" />

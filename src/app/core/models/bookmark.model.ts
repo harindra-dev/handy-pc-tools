@@ -5,8 +5,9 @@ export interface Bookmark {
   folder?: string;
   favicon?: string;
   description?: string;
-  dateCreated: Date;
-  dateModified: Date;
+  created: Date;
+  lastUpdated: Date;
+  lastAccessed: Date;
 }
 
 export interface BookmarkFolder {
