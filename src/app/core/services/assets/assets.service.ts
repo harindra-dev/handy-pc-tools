@@ -40,6 +40,11 @@ export class AssetsService {
       ? relativePath.substring(1)
       : relativePath;
 
+    // Avoid duplicating 'assets/' in the path
+    if (cleanPath.startsWith('assets/')) {
+      return this.isElectron ? `./${cleanPath}` : `/${cleanPath}`;
+    }
+
     // In Electron, use relative paths; in web, use absolute paths
     const basePath = this.isElectron ? './assets/' : '/assets/';
     return `${basePath}${cleanPath}`;
