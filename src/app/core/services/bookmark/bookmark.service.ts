@@ -1,7 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Bookmark, BookmarkFolder, BookmarkData } from '../../models/bookmark.model';
+import {
+  Bookmark,
+  BookmarkFolder,
+  BookmarkData,
+} from '../../models/bookmark.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +16,8 @@ export class BookmarkService {
   private readonly bookmarksStoreName = 'bookmarks';
   private readonly foldersStoreName = 'folders';
 
-  private bookmarksSubject = new BehaviorSubject<Bookmark[]>([]);
-  private foldersSubject = new BehaviorSubject<BookmarkFolder[]>([]);
+  private readonly bookmarksSubject = new BehaviorSubject<Bookmark[]>([]);
+  private readonly foldersSubject = new BehaviorSubject<BookmarkFolder[]>([]);
 
   public bookmarks$ = this.bookmarksSubject.asObservable();
   public folders$ = this.foldersSubject.asObservable();
@@ -54,7 +58,9 @@ export class BookmarkService {
           });
           bookmarkStore.createIndex('folder', 'folder', { unique: false });
           bookmarkStore.createIndex('created', 'created', { unique: false });
-          bookmarkStore.createIndex('lastAccessed', 'lastAccessed', { unique: false });
+          bookmarkStore.createIndex('lastAccessed', 'lastAccessed', {
+            unique: false,
+          });
         }
 
         // Create folders store
@@ -80,7 +86,9 @@ export class BookmarkService {
   }
 
   // Bookmark CRUD Operations
-  async addBookmark(bookmark: Omit<Bookmark, 'id' | 'created' | 'lastUpdated' | 'lastAccessed'>): Promise<Bookmark> {
+  async addBookmark(
+    bookmark: Omit<Bookmark, 'id' | 'created' | 'lastUpdated' | 'lastAccessed'>
+  ): Promise<Bookmark> {
     const db = await this.getDatabase();
     const now = new Date();
     const newBookmark: Bookmark = {
@@ -92,7 +100,10 @@ export class BookmarkService {
     };
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([this.bookmarksStoreName], 'readwrite');
+      const transaction = db.transaction(
+        [this.bookmarksStoreName],
+        'readwrite'
+      );
       const store = transaction.objectStore(this.bookmarksStoreName);
       const request = store.add(newBookmark);
 
@@ -112,7 +123,10 @@ export class BookmarkService {
     };
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([this.bookmarksStoreName], 'readwrite');
+      const transaction = db.transaction(
+        [this.bookmarksStoreName],
+        'readwrite'
+      );
       const store = transaction.objectStore(this.bookmarksStoreName);
       const request = store.put(updatedBookmark);
 
@@ -128,7 +142,10 @@ export class BookmarkService {
     const db = await this.getDatabase();
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([this.bookmarksStoreName], 'readwrite');
+      const transaction = db.transaction(
+        [this.bookmarksStoreName],
+        'readwrite'
+      );
       const store = transaction.objectStore(this.bookmarksStoreName);
       const request = store.delete(id);
 
@@ -142,9 +159,12 @@ export class BookmarkService {
 
   async updateLastAccessed(id: string): Promise<void> {
     const db = await this.getDatabase();
-    
+
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([this.bookmarksStoreName], 'readwrite');
+      const transaction = db.transaction(
+        [this.bookmarksStoreName],
+        'readwrite'
+      );
       const store = transaction.objectStore(this.bookmarksStoreName);
       const getRequest = store.get(id);
 
@@ -154,7 +174,7 @@ export class BookmarkService {
         if (bookmark) {
           bookmark.lastAccessed = new Date();
           const putRequest = store.put(bookmark);
-          
+
           putRequest.onerror = () => reject(putRequest.error);
           putRequest.onsuccess = () => {
             this.loadBookmarks();
@@ -178,9 +198,9 @@ export class BookmarkService {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const bookmarks = request.result as Bookmark[];
-        const filtered = folder 
-          ? bookmarks.filter(b => b.folder === folder)
-          : bookmarks.filter(b => !b.folder || b.folder === '');
+        const filtered = folder
+          ? bookmarks.filter((b) => b.folder === folder)
+          : bookmarks.filter((b) => !b.folder || b.folder === '');
         resolve(filtered);
       };
     });
@@ -237,8 +257,12 @@ export class BookmarkService {
       request.onsuccess = () => {
         const bookmarks = request.result as Bookmark[];
         // Sort by last accessed (most recent first)
-        bookmarks.sort((a, b) => new Date(b.lastAccessed).getTime() - new Date(a.lastAccessed).getTime());
-        
+        bookmarks.sort(
+          (a, b) =>
+            new Date(b.lastAccessed).getTime() -
+            new Date(a.lastAccessed).getTime()
+        );
+
         this.bookmarksSubject.next(bookmarks);
         this.bookmarksSignal.set(bookmarks);
         resolve();
@@ -257,8 +281,12 @@ export class BookmarkService {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const folders = request.result as BookmarkFolder[];
-        folders.sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
-        
+        folders.sort(
+          (a, b) =>
+            new Date(b.dateCreated).getTime() -
+            new Date(a.dateCreated).getTime()
+        );
+
         this.foldersSubject.next(folders);
         this.foldersSignal.set(folders);
         resolve();
@@ -282,11 +310,13 @@ export class BookmarkService {
   async searchBookmarks(query: string): Promise<Bookmark[]> {
     const bookmarks = this.bookmarksSignal();
     const searchTerm = query.toLowerCase();
-    
-    return bookmarks.filter(bookmark =>
-      bookmark.title.toLowerCase().includes(searchTerm) ||
-      bookmark.url.toLowerCase().includes(searchTerm) ||
-      (bookmark.description && bookmark.description.toLowerCase().includes(searchTerm))
+
+    return bookmarks.filter(
+      (bookmark) =>
+        bookmark.title.toLowerCase().includes(searchTerm) ||
+        bookmark.url.toLowerCase().includes(searchTerm) ||
+        (bookmark.description &&
+          bookmark.description.toLowerCase().includes(searchTerm))
     );
   }
 
@@ -300,7 +330,10 @@ export class BookmarkService {
 
   async importBookmarks(data: BookmarkData): Promise<void> {
     const db = await this.getDatabase();
-    const transaction = db.transaction([this.bookmarksStoreName, this.foldersStoreName], 'readwrite');
+    const transaction = db.transaction(
+      [this.bookmarksStoreName, this.foldersStoreName],
+      'readwrite'
+    );
 
     // Import folders first
     const folderStore = transaction.objectStore(this.foldersStoreName);
