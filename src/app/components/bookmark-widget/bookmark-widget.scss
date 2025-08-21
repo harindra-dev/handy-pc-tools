@@ -155,7 +155,7 @@
   width: 42px;
   height: 42px;
   &:hover {
-    background: var(--brutal-neon-green);
+    background: var(--brutal-cyan);
     // color: var(--brutal-white);
     transform: translate(-2px, -1px);
     box-shadow: var(--brutal-shadow-hover) var(--brutal-black);
@@ -421,13 +421,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--brutal-black);
+  // background: var(--brutal-black);
   color: var(--brutal-white);
+  border: var(--brutal-border) solid var(--brutal-black);
 
   img {
     width: 16px;
     height: 16px;
-    filter: brightness(0) invert(1);
+    // filter: brightness(0) invert(1);
   }
 
   i {
@@ -555,7 +556,11 @@
   background: var(--brutal-white);
   border: var(--brutal-border) solid var(--brutal-black);
   border-radius: 0;
-  box-shadow: var(--brutal-shadow) var(--brutal-black);
+
+  &:hover {
+    transform: translate(-2px, -1px);
+    box-shadow: var(--brutal-shadow) var(--brutal-black);
+  }
 
   i {
     font-size: 2.5rem;

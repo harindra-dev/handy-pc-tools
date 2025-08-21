@@ -56,6 +56,34 @@ export class AssetsService {
   }
 
   /**
+   * Get audio asset path
+   * @param audioName - Audio filename (e.g., 'click.mp3')
+   * @returns Full path to audio file
+   */
+  getAudioPath(audioName: string): string {
+    return this.getAssetPath(`audio/${audioName}`);
+  }
+
+  /**
+   * Get audio asset path with fallback to public folder
+   * @param audioName - Audio filename (e.g., 'click.mp3')
+   * @returns Full path to audio file
+   */
+  getAudioPathWithFallback(audioName: string): string {
+    // Try assets folder first, then public folder
+    return this.getAssetPath(`audio/${audioName}`);
+  }
+
+  /**
+   * Get public folder audio path (fallback)
+   * @param audioName - Audio filename (e.g., 'click.mp3')
+   * @returns Full path to audio file in public folder
+   */
+  getPublicAudioPath(audioName: string): string {
+    return `/${audioName}`;
+  }
+
+  /**
    * Preload an image for better performance
    * @param imagePath - Path to the image
    * @returns Promise that resolves when image is loaded
