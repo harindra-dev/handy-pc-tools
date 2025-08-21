@@ -147,14 +147,14 @@
     }
 
     .current-line {
-      background: var(--brutal-accent-yellow) !important;
+      // background: var(--brutal-lime-yellow) !important;
       border: 1px solid var(--brutal-black) !important;
     }
 
-    // .selected-text {
-    //   background: var(--brutal-accent-cyan) !important;
-    //   color: var(--brutal-black) !important;
-    // }
+    .selected-text {
+      background: var(--brutal-cyan) !important;
+      color: var(--brutal-black) !important;
+    }
 
     .line-numbers {
       color: var(--brutal-black) !important;
@@ -162,7 +162,7 @@
     }
 
     .cursor {
-      background: var(--brutal-accent-red) !important;
+      background: var(--brutal-ascent-red) !important;
       border: 1px solid var(--brutal-black) !important;
       width: 3px !important;
     }
@@ -177,23 +177,19 @@
       }
     }
 
-    .diffViewport {
-      background: var(--brutal-white) !important;
-    }
-
     .char-insert {
-      background: var(--brutal-accent-green) !important;
+      background: var(--brutal-neon-green) !important;
       color: var(--brutal-black) !important;
     }
 
     .char-delete {
-      background: var(--brutal-accent-red) !important;
+      background: var(--brutal-red) !important;
       color: var(--brutal-white) !important;
     }
 
     .line-insert {
       background: rgba(0, 255, 0, 0.2) !important;
-      border-left: var(--brutal-border) solid var(--brutal-accent-green) !important;
+      border-left: var(--brutal-border) solid var(--brutal-neon-green) !important;
     }
 
     .line-delete {

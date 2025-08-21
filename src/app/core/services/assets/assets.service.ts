@@ -1,9 +1,34 @@
 import { Injectable } from '@angular/core';
 
+// Type definition for Electron window
+interface ElectronWindow extends Window {
+  process?: {
+    type: string;
+    versions?: {
+      electron: string;
+    };
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AssetsService {
+  private readonly isElectron = this.checkIsElectron();
+
+  /**
+   * Check if running in Electron environment
+   */
+  private checkIsElectron(): boolean {
+    const electronWindow = window as ElectronWindow;
+    // Check multiple ways to detect Electron
+    return !!(
+      electronWindow?.process?.type ||
+      electronWindow?.process?.versions?.electron ||
+      navigator.userAgent.toLowerCase().includes('electron')
+    );
+  }
+
   /**
    * Get the full path to an asset based on environment
    * @param relativePath - Relative path from assets folder (e.g., 'images/logo.png')
@@ -15,8 +40,9 @@ export class AssetsService {
       ? relativePath.substring(1)
       : relativePath;
 
-    // In Angular, assets are served from /assets/ in both dev and production
-    return `/assets/${cleanPath}`;
+    // In Electron, use relative paths; in web, use absolute paths
+    const basePath = this.isElectron ? './assets/' : '/assets/';
+    return `${basePath}${cleanPath}`;
   }
 
   /**
@@ -80,7 +106,8 @@ export class AssetsService {
    * @returns Full path to audio file in public folder
    */
   getPublicAudioPath(audioName: string): string {
-    return `/${audioName}`;
+    // In Electron, use relative path; in web, use absolute path
+    return this.isElectron ? `./${audioName}` : `/${audioName}`;
   }
 
   /**
