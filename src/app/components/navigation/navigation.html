@@ -1,21 +1,52 @@
-<section class="container pt-4 pb-2 px-0 border-bottom mb-5">
-  <div class="row align-items-center justify-content-between">
-    <div class="col">
-      <h1 class="app-title">Handy Pc Tools</h1>
+<header class="nav-brutal">
+  <div class="nav-brutal-container container">
+    <div class="nav-brutal-brand">
+      <h1 class="nav-brutal-title">HANDY PC TOOLS</h1>
+      <div class="nav-brutal-subtitle">BRUTAL.EXE</div>
     </div>
-    <div class="col">
-      <nav>
-        <ul class="nav justify-content-end">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" routerLink="/">
-              /
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link pe-0" routerLink="/about"> About </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <nav class="nav-brutal-menu">
+      <a
+        class="nav-brutal-link"
+        routerLink="/"
+        routerLinkActive="nav-brutal-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="nav-brutal-symbol">&gt;</span>
+        HOME
+      </a>
+      <a
+        class="nav-brutal-link"
+        routerLink="/text-compare"
+        routerLinkActive="nav-brutal-active"
+      >
+        <span class="nav-brutal-symbol">&gt;</span>
+        DIFF
+      </a>
+      <a
+        class="nav-brutal-link"
+        routerLink="/bookmarks"
+        routerLinkActive="nav-brutal-active"
+      >
+        <span class="nav-brutal-symbol">&gt;</span>
+        LINKS
+      </a>
+      <a
+        class="nav-brutal-link"
+        routerLink="/notes"
+        routerLinkActive="nav-brutal-active"
+      >
+        <span class="nav-brutal-symbol">&gt;</span>
+        NOTES
+      </a>
+      <a
+        class="nav-brutal-link"
+        routerLink="/about"
+        routerLinkActive="nav-brutal-active"
+      >
+        <span class="nav-brutal-symbol">&gt;</span>
+        ABOUT
+      </a>
+    </nav>
   </div>
-</section>
+  <div class="nav-brutal-border"></div>
+</header>

@@ -1,41 +1,39 @@
 @if (isOpen) {
-<div class="dialog-overlay" (click)="onBackdropClick($event)">
-  <div class="dialog-container">
-    <div class="dialog-header">
-      <div class="dialog-icon" [ngClass]="type">
-        @switch (type) {
-          @case ('error') {
-            <i class="bi bi-exclamation-triangle"></i>
-          }
-          @case ('warning') {
-            <i class="bi bi-exclamation-circle"></i>
-          }
-          @default {
-            <i class="bi bi-question-circle"></i>
-          }
-        }
+<div class="dialog-brutal-overlay" (click)="onBackdropClick($event)">
+  <div class="dialog-brutal-container">
+    <div class="dialog-brutal-header">
+      <div class="dialog-brutal-icon" [ngClass]="type">
+        @switch (type) { @case ('error') {
+        <i class="bi bi-exclamation-triangle"></i>
+        } @case ('warning') {
+        <i class="bi bi-exclamation-circle"></i>
+        } @default {
+        <i class="bi bi-question-circle"></i>
+        } }
       </div>
-      <h3 class="dialog-title">{{ title }}</h3>
+      <h3 class="dialog-brutal-title">{{ title }}</h3>
     </div>
-    
-    <div class="dialog-body">
-      <p class="dialog-message">{{ message }}</p>
+
+    <div class="dialog-brutal-body">
+      <p class="dialog-brutal-message">{{ message }}</p>
     </div>
-    
-    <div class="dialog-actions">
-      <button 
-        type="button" 
-        class="btn btn-secondary" 
+
+    <div class="dialog-brutal-actions">
+      @if (cancelText) {
+      <button
+        type="button"
+        class="btn-brutal btn-brutal-secondary"
         (click)="onCancel()"
       >
         {{ cancelText }}
       </button>
-      <button 
-        type="button" 
-        class="btn btn-primary" 
+      }
+      <button
+        type="button"
+        class="btn-brutal btn-brutal-primary"
         [ngClass]="{
-          'btn-danger': type === 'error',
-          'btn-warning': type === 'warning'
+          'btn-brutal-danger': type === 'error',
+          'btn-brutal-warning': type === 'warning'
         }"
         (click)="onConfirm()"
       >

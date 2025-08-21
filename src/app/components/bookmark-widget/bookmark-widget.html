@@ -1,18 +1,31 @@
 <div class="bookmark-widget">
+  <!-- Brutal Header -->
+  <div class="bookmark-widget-header">
+    <h3 class="widget-title">LINKS.DB</h3>
+    <p class="widget-subtitle">DATABASE MANAGER v1.2</p>
+  </div>
+
   <!-- Add Bookmark Form - Always Visible -->
   <div class="add-bookmark-form">
     <div class="form-group">
       <label for="bookmark-url">URL *</label>
-      <input
-        id="bookmark-url"
-        type="url"
-        class="form-control"
-        placeholder="Paste URL here..."
-        [value]="bookmarkForm().url"
-        (input)="onUrlInput($any($event.target).value)"
-        (paste)="onUrlPaste($event)"
-        required
-      />
+      <div class="url-input-group">
+        <input
+          id="bookmark-url"
+          type="url"
+          class="form-control"
+          placeholder="Paste URL here..."
+          [value]="bookmarkForm().url"
+          (input)="onUrlInput($any($event.target).value)"
+          (paste)="onUrlPaste($event)"
+          required
+        />
+        @if (faviconPreview()) {
+        <div class="favicon-preview">
+          <img [src]="faviconPreview()" alt="Favicon" class="favicon-img" />
+        </div>
+        }
+      </div>
     </div>
 
     <div class="form-group">
@@ -64,10 +77,18 @@
           (keydown.enter)="createFolder()"
         />
         <div class="folder-actions">
-          <button type="button" class="btn-folder-action" (click)="createFolder()">
+          <button
+            type="button"
+            class="btn-folder-action"
+            (click)="createFolder()"
+          >
             <i class="bi bi-check"></i>
           </button>
-          <button type="button" class="btn-folder-action cancel" (click)="showCreateFolder.set(false)">
+          <button
+            type="button"
+            class="btn-folder-action cancel"
+            (click)="showCreateFolder.set(false)"
+          >
             <i class="bi bi-x"></i>
           </button>
         </div>
@@ -80,14 +101,18 @@
         type="button"
         class="btn-save"
         (click)="addBookmark()"
-        [disabled]="isLoading() || !bookmarkForm().title.trim() || !bookmarkForm().url.trim()"
+        [disabled]="
+          isLoading() ||
+          !bookmarkForm().title.trim() ||
+          !bookmarkForm().url.trim()
+        "
       >
         @if (isLoading()) {
         <span class="spinner"></span>
         } @else {
         <i class="bi bi-bookmark-plus"></i>
         }
-        <span>{{ isLoading() ? 'Saving...' : 'Save Bookmark' }}</span>
+        <span>{{ isLoading() ? "Saving..." : "Save Bookmark" }}</span>
       </button>
     </div>
   </div>

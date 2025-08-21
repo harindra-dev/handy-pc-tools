@@ -138,6 +138,39 @@ export class BookmarkService {
     });
   }
 
+  async updateBookmarkFavicon(id: string, favicon: string): Promise<void> {
+    const db = await this.getDatabase();
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(
+        [this.bookmarksStoreName],
+        'readwrite'
+      );
+      const store = transaction.objectStore(this.bookmarksStoreName);
+      const getRequest = store.get(id);
+
+      getRequest.onerror = () =>
+        reject(new Error('Failed to fetch bookmark for favicon update'));
+      getRequest.onsuccess = () => {
+        const bookmark = getRequest.result as Bookmark;
+        if (bookmark) {
+          bookmark.favicon = favicon;
+          bookmark.lastUpdated = new Date();
+
+          const putRequest = store.put(bookmark);
+          putRequest.onerror = () =>
+            reject(new Error('Failed to update bookmark favicon'));
+          putRequest.onsuccess = () => {
+            this.loadBookmarks();
+            resolve();
+          };
+        } else {
+          resolve();
+        }
+      };
+    });
+  }
+
   async deleteBookmark(id: string): Promise<void> {
     const db = await this.getDatabase();
 
@@ -301,9 +334,141 @@ export class BookmarkService {
   async getFaviconUrl(url: string): Promise<string> {
     try {
       const domain = new URL(url).hostname;
+
+      // Try multiple favicon sources in order of preference
+      const faviconSources = [
+        // Try to extract favicon from the actual webpage
+        () => this.extractFaviconFromPage(url),
+        // High-quality favicon services
+        () => `https://icon.horse/icon/${domain}`,
+        () => `https://favicongrabber.com/api/grab/${domain}`,
+        () => `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+        // Fallback options
+        () => `https://${domain}/favicon.ico`,
+        () => `https://api.faviconkit.com/${domain}/32`,
+        () => `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+      ];
+
+      // Try each source until we find a working favicon
+      for (const getFavicon of faviconSources) {
+        try {
+          const faviconUrl = await getFavicon();
+          if (faviconUrl && (await this.validateFavicon(faviconUrl))) {
+            return faviconUrl;
+          }
+        } catch {
+          continue;
+        }
+      }
+
+      // Ultimate fallback
       return `https://www.google.com/s2/favicons?domain=${domain}&sz=16`;
     } catch {
       return '';
+    }
+  }
+
+  private async extractFaviconFromPage(url: string): Promise<string | null> {
+    try {
+      // Use the same proxy approach as title extraction
+      const proxies = [
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      ];
+
+      for (const proxyUrl of proxies) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+          const response = await fetch(proxyUrl, {
+            signal: controller.signal,
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!response.ok) continue;
+
+          let html: string;
+          if (proxyUrl.includes('allorigins.win')) {
+            const data = await response.json();
+            html = data.contents;
+          } else {
+            html = await response.text();
+          }
+
+          // Look for various favicon declarations
+          const faviconPatterns = [
+            /<link[^>]*rel=["'](?:shortcut )?icon["'][^>]*href=["']([^"']+)["']/i,
+            /<link[^>]*href=["']([^"']+)["'][^>]*rel=["'](?:shortcut )?icon["']/i,
+            /<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i,
+            /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i,
+          ];
+
+          for (const pattern of faviconPatterns) {
+            const faviconRegex = new RegExp(pattern);
+            const match = faviconRegex.exec(html);
+            if (match?.[1]) {
+              let faviconUrl = match[1];
+
+              // Convert relative URLs to absolute
+              if (faviconUrl.startsWith('//')) {
+                faviconUrl = `https:${faviconUrl}`;
+              } else if (faviconUrl.startsWith('/')) {
+                const baseUrl = new URL(url);
+                faviconUrl = `${baseUrl.protocol}//${baseUrl.host}${faviconUrl}`;
+              } else if (!faviconUrl.startsWith('http')) {
+                const baseUrl = new URL(url);
+                faviconUrl = `${baseUrl.protocol}//${baseUrl.host}/${faviconUrl}`;
+              }
+
+              return faviconUrl;
+            }
+          }
+        } catch {
+          continue;
+        }
+      }
+    } catch {
+      // Extraction failed
+    }
+
+    return null;
+  }
+
+  private async validateFavicon(faviconUrl: string): Promise<boolean> {
+    try {
+      // For favicongrabber API, extract the actual icon URL
+      if (faviconUrl.includes('favicongrabber.com')) {
+        const response = await fetch(faviconUrl);
+        const data = await response.json();
+        if (data.icons && data.icons.length > 0) {
+          // Get the largest available icon
+          const bestIcon = data.icons.reduce((prev: any, current: any) => {
+            const prevSize = parseInt(prev.sizes?.split('x')[0] || '0');
+            const currentSize = parseInt(current.sizes?.split('x')[0] || '0');
+            return currentSize > prevSize ? current : prev;
+          });
+          return !!bestIcon.src;
+        }
+        return false;
+      }
+
+      // For other URLs, do a quick HEAD request to check if the favicon exists
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const response = await fetch(faviconUrl, {
+        method: 'HEAD',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      const contentType = response.headers.get('content-type');
+      return response.ok && (contentType?.startsWith('image/') ?? false);
+    } catch {
+      return false;
     }
   }
 
@@ -315,8 +480,7 @@ export class BookmarkService {
       (bookmark) =>
         bookmark.title.toLowerCase().includes(searchTerm) ||
         bookmark.url.toLowerCase().includes(searchTerm) ||
-        (bookmark.description &&
-          bookmark.description.toLowerCase().includes(searchTerm))
+        bookmark.description?.toLowerCase().includes(searchTerm)
     );
   }
 
@@ -340,7 +504,7 @@ export class BookmarkService {
     for (const folder of data.folders) {
       await new Promise<void>((resolve, reject) => {
         const request = folderStore.put(folder);
-        request.onerror = () => reject(request.error);
+        request.onerror = () => reject(new Error('Failed to import folder'));
         request.onsuccess = () => resolve();
       });
     }
@@ -350,7 +514,7 @@ export class BookmarkService {
     for (const bookmark of data.bookmarks) {
       await new Promise<void>((resolve, reject) => {
         const request = bookmarkStore.put(bookmark);
-        request.onerror = () => reject(request.error);
+        request.onerror = () => reject(new Error('Failed to import bookmark'));
         request.onsuccess = () => resolve();
       });
     }

@@ -9,4 +9,9 @@ import { RouterLink } from '@angular/router';
   imports: [MatRippleModule, RouterLink, BookmarkWidget],
   styleUrl: './home.scss',
 })
-export class Home {}
+export class Home {
+  getCurrentTime(): string {
+    const now = new Date();
+    return now.toTimeString().slice(0, 8);
+  }
+}

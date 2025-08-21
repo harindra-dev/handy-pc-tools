@@ -1,10 +1,13 @@
 <div class="text-compare-container">
-  @if(isLoading) {
-  <div class="loading-indicator">Loading editor...</div>
-  } @if(hasError) {
-  <div class="error-message">
-    {{ errorMessage }}
+  <div class="text-compare-header">
+    <h1 class="text-compare-title">DIFF.EXE</h1>
+    <p class="text-compare-subtitle">BINARY COMPARE ENGINE v2.0</p>
   </div>
+
+  @if(isLoading) {
+  <div class="loading-indicator">LOADING DIFF ENGINE</div>
+  } @if(hasError) {
+  <div class="error-message">CRITICAL SYSTEM ERROR: {{ errorMessage }}</div>
   }
 
   <div

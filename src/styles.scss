@@ -1,57 +1,462 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use "@angular/material" as mat;
+// BRUTAL DESIGN SYSTEM
+// Raw, industrial, aggressive UI components
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;700;900&display=swap");
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
-html {
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+
+// BRUTAL COLOR PALETTE - NEON COLORS
+:root {
+  --brutal-black: #000000;
+  --brutal-white: #ffffff;
+  --brutal-gray-dark: #1a1a1a;
+  --brutal-gray-medium: #333333;
+  --brutal-gray-lightest: #e1e1e1;
+  --brutal-gray-light: #666666;
+  --brutal-neon-green: #00ff00;
+  --brutal-dark-green: #00cc00;
+  --brutal-neon-red: #ff0044;
+  --brutal-cyan: #00ffff;
+  --brutal-magenta: #ff00ff;
+  --brutal-rose: #fd4499;
+  --brutal-lime-yellow: #ffe62d;
+  --brutal-accent-red: #ff0044;
+  --brutal-border-1: 1px;
+  --brutal-border: 2px;
+  --brutal-border-thick: 3px;
+  --brutal-spacing-xs: 4px;
+  --brutal-spacing-sm: 8px;
+  --brutal-spacing-md: 12px;
+  --brutal-spacing-lg: 16px;
+  --brutal-spacing-xl: 20px;
+  --brutal-spacing-xxl: 24px;
+  --brutal-shadow: 3px 3px 0px;
+  --brutal-shadow-hover: 4px 4px 0px;
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+// BRUTAL RESET & BASE STYLES
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
+html {
+  box-sizing: border-box;
 }
 
 html,
 body {
   height: 100%;
-  font-size: 16px;
-  line-height: 1.5;
-}
-body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-image: linear-gradient(to right bottom, #f4f4fb, #f8fafc);
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Inter", "Arial Black", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  background: var(--brutal-white);
+  color: var(--brutal-black);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url("assets/images/Gradient2.svg");
+  background-size: cover;
+  background-position: 0 0;
+  // background-blend-mode: multiply;
 }
 
 * {
-  box-sizing: border-box;
-  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
+// BRUTAL TYPOGRAPHY
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", "Arial Black", sans-serif;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+h2 {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+}
+h3 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+h4 {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+h5 {
+  font-size: clamp(0.875rem, 2vw, 1.25rem);
+}
+h6 {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+p {
+  font-family: "Inter", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 0;
+}
+
+code,
+pre {
+  font-family: "JetBrains Mono", "Courier New", monospace;
+  font-weight: 400;
+}
+
+// BRUTAL LINKS
 a {
+  color: var(--brutal-black);
   text-decoration: none;
+  font-weight: 700;
+  border-bottom: var(--brutal-border) solid var(--brutal-accent-red);
+  transition: all 0.1s ease;
+
+  &:hover {
+    background: var(--brutal-accent-red);
+    color: var(--brutal-white);
+    border-bottom-color: var(--brutal-black);
+  }
+
+  &:active {
+    background: var(--brutal-black);
+    color: var(--brutal-white);
+    border-bottom-color: var(--brutal-accent-yellow);
+  }
+}
+
+// BRUTAL BUTTONS BASE CLASS
+.btn-brutal {
+  display: inline-block;
+  padding: var(--brutal-spacing-sm) var(--brutal-spacing-md);
+  background: var(--brutal-white);
+  color: var(--brutal-black);
+  border: var(--brutal-border) solid var(--brutal-black);
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  letter-spacing: 1px;
+  box-sizing: border-box;
+
+  &:hover {
+    background: var(--brutal-black);
+    color: var(--brutal-neon-green);
+    transform: translate(-2px, -2px);
+    box-shadow: var(--brutal-shadow-hover) var(--brutal-neon-green);
+  }
+
+  &:active {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--brutal-shadow) var(--brutal-neon-green);
+  }
+
+  &.btn-brutal-primary {
+    background: var(--brutal-neon-green);
+    color: var(--brutal-black);
+    border-color: var(--brutal-black);
+
+    &:hover {
+      background: var(--brutal-black);
+      color: var(--brutal-neon-green);
+      box-shadow: var(--brutal-shadow-hover) var(--brutal-neon-green);
+    }
+  }
+
+  &.btn-brutal-danger {
+    background: var(--brutal-accent-red);
+    color: var(--brutal-white);
+    border-color: var(--brutal-black);
+
+    &:hover {
+      background: var(--brutal-black);
+      color: var(--brutal-accent-red);
+      box-shadow: var(--brutal-shadow-hover) var(--brutal-accent-red);
+    }
+  }
+}
+
+// BRUTAL CARDS
+.card-brutal {
+  background: var(--brutal-white);
+  border: var(--brutal-border) solid var(--brutal-black);
+  padding: var(--brutal-spacing-md);
+  position: relative;
+  box-sizing: border-box;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: var(--brutal-spacing-xs);
+    left: var(--brutal-spacing-xs);
+    right: -var(--brutal-spacing-xs);
+    bottom: -var(--brutal-spacing-xs);
+    background: var(--brutal-black);
+    z-index: -1;
+  }
+
+  &.card-brutal-accent {
+    &::before {
+      background: var(--brutal-neon-green);
+    }
+  }
+
+  &.card-brutal-danger {
+    &::before {
+      background: var(--brutal-accent-red);
+    }
+  }
+}
+
+// BRUTAL GRID SYSTEM
+.grid-brutal {
+  display: grid;
+  gap: var(--brutal-spacing-lg);
+
+  &.grid-brutal-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &.grid-brutal-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  &.grid-brutal-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    &.grid-brutal-2,
+    &.grid-brutal-3,
+    &.grid-brutal-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// BRUTAL CONTAINER
+.container-brutal {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--brutal-spacing-lg);
+
+  @media (max-width: 768px) {
+    padding: 0 var(--brutal-spacing-md);
+  }
+}
+
+// BRUTAL FORM INPUTS
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--brutal-spacing-sm);
+  background: var(--brutal-white);
+  color: var(--brutal-black);
+  border: var(--brutal-border) solid var(--brutal-black);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.875rem;
+  font-weight: 400;
+  transition: all 0.1s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    // background: var(--brutal-neon-green);
+    color: var(--brutal-black);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--brutal-shadow) var(--brutal-neon-green);
+  }
+
+  &::placeholder {
+    color: var(--brutal-gray-medium);
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  &:disabled {
+    background: var(--brutal-gray-light);
+    color: var(--brutal-gray-medium);
+    cursor: not-allowed;
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+select {
+  cursor: pointer;
+}
+
+// BRUTAL SPACING UTILITIES
+.mb-brutal-xs {
+  margin-bottom: var(--brutal-spacing-xs);
+}
+.mb-brutal-sm {
+  margin-bottom: var(--brutal-spacing-sm);
+}
+.mb-brutal-md {
+  margin-bottom: var(--brutal-spacing-md);
+}
+.mb-brutal-lg {
+  margin-bottom: var(--brutal-spacing-lg);
+}
+.mb-brutal-xl {
+  margin-bottom: var(--brutal-spacing-xl);
+}
+.mb-brutal-xxl {
+  margin-bottom: var(--brutal-spacing-xxl);
+}
+
+.mt-brutal-xs {
+  margin-top: var(--brutal-spacing-xs);
+}
+.mt-brutal-sm {
+  margin-top: var(--brutal-spacing-sm);
+}
+.mt-brutal-md {
+  margin-top: var(--brutal-spacing-md);
+}
+.mt-brutal-lg {
+  margin-top: var(--brutal-spacing-lg);
+}
+.mt-brutal-xl {
+  margin-top: var(--brutal-spacing-xl);
+}
+.mt-brutal-xxl {
+  margin-top: var(--brutal-spacing-xxl);
+}
+
+.p-brutal-xs {
+  padding: var(--brutal-spacing-xs);
+}
+.p-brutal-sm {
+  padding: var(--brutal-spacing-sm);
+}
+.p-brutal-md {
+  padding: var(--brutal-spacing-md);
+}
+.p-brutal-lg {
+  padding: var(--brutal-spacing-lg);
+}
+.p-brutal-xl {
+  padding: var(--brutal-spacing-xl);
+}
+.p-brutal-xxl {
+  padding: var(--brutal-spacing-xxl);
+}
+
+// BRUTAL TEXT UTILITIES
+.text-brutal-center {
+  text-align: center;
+}
+.text-brutal-left {
+  text-align: left;
+}
+.text-brutal-right {
+  text-align: right;
+}
+.text-brutal-uppercase {
+  text-transform: uppercase;
+}
+.text-brutal-bold {
+  font-weight: 700;
+}
+.text-brutal-black {
+  font-weight: 900;
+}
+
+// BRUTAL BORDERS
+.border-brutal {
+  border: var(--brutal-border) solid var(--brutal-black);
+}
+.border-brutal-thick {
+  border: var(--brutal-border-thick) solid var(--brutal-black);
+}
+.border-brutal-red {
+  border: var(--brutal-border) solid var(--brutal-accent-red);
+}
+.border-brutal-yellow {
+  border: var(--brutal-border) solid var(--brutal-accent-yellow);
+}
+
+// BRUTAL ANIMATIONS
+@keyframes brutal-glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.brutal-glitch:hover {
+  animation: brutal-glitch 0.3s ease-in-out;
+}
+
+// BRUTAL SELECTION
+::selection {
+  background: var(--brutal-accent-red);
+  color: var(--brutal-white);
+}
+
+::-moz-selection {
+  background: var(--brutal-accent-red);
+  color: var(--brutal-white);
+}
+
+// BRUTAL SCROLLBAR
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--brutal-white);
+  border: 1px solid var(--brutal-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brutal-black);
+  border: 1px solid var(--brutal-black);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brutal-neon-green);
 }

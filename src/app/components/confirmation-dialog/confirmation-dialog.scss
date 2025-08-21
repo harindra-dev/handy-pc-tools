@@ -1,142 +1,204 @@
-.dialog-overlay {
+// BRUTAL CONFIRMATION DIALOG
+.dialog-brutal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: 1rem;
-  animation: fadeIn 0.2s ease-out;
+  padding: var(--brutal-spacing-lg);
+  animation: brutal-fade-in 0.2s ease-out;
 }
 
-.dialog-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+.dialog-brutal-container {
+  background: var(--brutal-white);
+  border: var(--brutal-border) solid var(--brutal-black);
+  border-radius: 0;
+  box-shadow: var(--brutal-shadow) var(--brutal-black);
   max-width: 400px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  animation: slideIn 0.3s ease-out;
+  animation: brutal-slide-in 0.3s ease-out;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: var(--brutal-spacing-xs);
+    left: var(--brutal-spacing-xs);
+    right: -var(--brutal-spacing-xs);
+    bottom: -var(--brutal-spacing-xs);
+    background: var(--brutal-neon-green);
+    z-index: -1;
+  }
 }
 
-.dialog-header {
-  padding: 1.5rem 1.5rem 0;
+.dialog-brutal-header {
+  padding: var(--brutal-spacing-lg);
+  background: var(--brutal-black);
+  color: var(--brutal-white);
+  border-bottom: var(--brutal-border) solid var(--brutal-black);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--brutal-spacing-md);
 }
 
-.dialog-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+.dialog-brutal-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--brutal-white);
+  color: var(--brutal-black);
+  border: var(--brutal-border-1) solid var(--brutal-black);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   i {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
   }
-  
+
   &.confirm {
-    background: #e0f2fe;
-    color: #0277bd;
+    background: var(--brutal-cyan);
+    color: var(--brutal-black);
   }
-  
+
   &.warning {
-    background: #fff3e0;
-    color: #f57c00;
+    background: var(--brutal-lime-yellow);
+    color: var(--brutal-black);
   }
-  
+
   &.error {
-    background: #ffebee;
-    color: #d32f2f;
+    background: var(--brutal-neon-red);
+    color: var(--brutal-white);
   }
 }
 
-.dialog-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+.dialog-brutal-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.125rem;
+  font-weight: 700;
   margin: 0;
-  color: #111827;
+  color: var(--brutal-white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.dialog-body {
-  padding: 1rem 1.5rem;
+.dialog-brutal-body {
+  padding: var(--brutal-spacing-lg);
+  background: var(--brutal-white);
 }
 
-.dialog-message {
+.dialog-brutal-message {
   margin: 0;
-  color: #6b7280;
+  color: var(--brutal-black);
   line-height: 1.5;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 
-.dialog-actions {
-  padding: 0 1.5rem 1.5rem;
+.dialog-brutal-actions {
+  padding: var(--brutal-spacing-lg);
+  background: var(--brutal-white);
+  border-top: var(--brutal-border-1) solid var(--brutal-gray-lightest);
   display: flex;
-  gap: 0.75rem;
+  gap: var(--brutal-spacing-md);
   justify-content: flex-end;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
+// BRUTAL BUTTONS
+.btn-brutal {
+  padding: var(--brutal-spacing-sm) var(--brutal-spacing-lg);
+  border: var(--brutal-border) solid var(--brutal-black);
+  border-radius: 0;
+  font-family: "JetBrains Mono", monospace;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   min-width: 80px;
-  
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--brutal-shadow) var(--brutal-black);
   }
-}
 
-.btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border-color: #d1d5db;
-  
   &:hover {
-    background: #e5e7eb;
-    border-color: #9ca3af;
+    transform: translate(-1px, -1px);
+    box-shadow: var(--brutal-shadow) var(--brutal-black);
+  }
+
+  &:active {
+    transform: translate(0, 0);
+    box-shadow: 1px 1px 0 var(--brutal-black);
   }
 }
 
-.btn-primary {
-  background: #4f46e5;
-  color: white;
-  
+.btn-brutal-secondary {
+  background: var(--brutal-white);
+  color: var(--brutal-black);
+  border-color: var(--brutal-black);
+
   &:hover {
-    background: #4338ca;
+    background: var(--brutal-gray-lightest);
+  }
+
+  &:focus {
+    background: var(--brutal-gray-lightest);
   }
 }
 
-.btn-danger {
-  background: #dc2626 !important;
-  
+.btn-brutal-primary {
+  background: var(--brutal-neon-green);
+  color: var(--brutal-black);
+  border-color: var(--brutal-black);
+
   &:hover {
-    background: #b91c1c !important;
+    background: var(--brutal-dark-green);
+  }
+
+  &:focus {
+    background: var(--brutal-dark-green);
   }
 }
 
-.btn-warning {
-  background: #d97706 !important;
-  
+.btn-brutal-danger {
+  background: var(--brutal-neon-red) !important;
+  color: var(--brutal-white) !important;
+
   &:hover {
-    background: #b45309 !important;
+    background: var(--brutal-accent-red) !important;
+  }
+
+  &:focus {
+    background: var(--brutal-accent-red) !important;
   }
 }
 
-@keyframes fadeIn {
+.btn-brutal-warning {
+  background: var(--brutal-lime-yellow) !important;
+  color: var(--brutal-black) !important;
+
+  &:hover {
+    background: #e6d129 !important;
+  }
+
+  &:focus {
+    background: #e6d129 !important;
+  }
+}
+
+@keyframes brutal-fade-in {
   from {
     opacity: 0;
   }
@@ -145,7 +207,7 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes brutal-slide-in {
   from {
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
@@ -158,16 +220,43 @@
 
 // Mobile responsiveness
 @media (max-width: 768px) {
-  .dialog-container {
-    margin: 1rem;
-    max-width: calc(100vw - 2rem);
+  .dialog-brutal-overlay {
+    padding: var(--brutal-spacing-md);
   }
-  
-  .dialog-actions {
+
+  .dialog-brutal-container {
+    max-width: calc(100vw - calc(var(--brutal-spacing-md) * 2));
+  }
+
+  .dialog-brutal-actions {
     flex-direction: column;
-    
-    .btn {
+    gap: var(--brutal-spacing-sm);
+    padding: var(--brutal-spacing-md);
+
+    .btn-brutal {
       width: 100%;
     }
+  }
+
+  .dialog-brutal-header {
+    padding: var(--brutal-spacing-md);
+    gap: var(--brutal-spacing-sm);
+  }
+
+  .dialog-brutal-body {
+    padding: var(--brutal-spacing-md);
+  }
+
+  .dialog-brutal-icon {
+    width: 32px;
+    height: 32px;
+
+    i {
+      font-size: 1rem;
+    }
+  }
+
+  .dialog-brutal-title {
+    font-size: 1rem;
   }
 }

@@ -1,20 +1,64 @@
 .text-compare-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 150px);
   width: 100%;
   max-width: 1900px;
-  margin: 0px auto;
-  padding: 16px;
+  margin: 0 auto;
+  padding: 0 var(--brutal-spacing-md) var(--brutal-spacing-md);
   box-sizing: border-box;
-  color: #ffffff;
+  background: var(--brutal-white);
+
+  .text-compare-header {
+    margin-bottom: var(--brutal-spacing-md);
+    padding: var(--brutal-spacing-sm);
+    background: var(--brutal-black);
+    color: var(--brutal-white);
+    border: var(--brutal-border) solid var(--brutal-black);
+
+    .text-compare-title {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .text-compare-subtitle {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--brutal-accent-green);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: var(--brutal-spacing-xs) 0 0 0;
+    }
+  }
 
   .loading-indicator {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
-    font-size: 1.2rem;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--brutal-black);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: var(--brutal-border) solid var(--brutal-black);
+      border-top: var(--brutal-border) solid var(--brutal-accent-red);
+      border-radius: 0;
+      animation: brutal-spinner 1s linear infinite;
+      margin-left: var(--brutal-spacing-md);
+    }
   }
 
   .error-message {
@@ -22,30 +66,155 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    color: #ff6b6b;
-    font-size: 1.2rem;
+    color: var(--brutal-white);
+    background: var(--brutal-accent-red);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 1.25rem;
     text-align: center;
-    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: var(--brutal-spacing-lg);
+    border: var(--brutal-border) solid var(--brutal-black);
+    position: relative;
+
+    &::before {
+      content: "[ERROR]";
+      position: absolute;
+      top: -12px;
+      left: var(--brutal-spacing-md);
+      background: var(--brutal-accent-red);
+      color: var(--brutal-black);
+      padding: 0 var(--brutal-spacing-sm);
+      font-size: 0.75rem;
+    }
   }
 
   .editor-container {
     flex: 1;
-    height: calc(100vh - 32px);
+    height: calc(100vh - 200px);
     min-height: 500px;
-    border: 1px solid #cdcdcd;
-    border-radius: 8px;
+    border: var(--brutal-border-1) solid var(--brutal-black);
     overflow: hidden;
+    background: var(--brutal-white);
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: var(--brutal-spacing-sm);
+      left: var(--brutal-spacing-sm);
+      right: -var(--brutal-spacing-sm);
+      bottom: -var(--brutal-spacing-sm);
+      background: var(--brutal-black);
+      z-index: -1;
+    }
 
     .diff-editor {
       width: 100%;
       height: 100%;
+      background: var(--brutal-white);
     }
   }
 }
 
+@keyframes brutal-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Monaco Editor brutal styling overrides
 ::ng-deep {
   ngx-monaco-diff-editor .editor-container {
     width: 100%;
     height: 100% !important;
+  }
+
+  // Monaco editor brutal theme overrides
+  .monaco-editor {
+    font-family: "JetBrains Mono", monospace !important;
+
+    .monaco-editor-background {
+      background: var(--brutal-white) !important;
+    }
+
+    .margin {
+      background: var(--vscode-textSeparator-foreground) !important;
+    }
+
+    .current-line {
+      background: var(--brutal-accent-yellow) !important;
+      border: 1px solid var(--brutal-black) !important;
+    }
+
+    // .selected-text {
+    //   background: var(--brutal-accent-cyan) !important;
+    //   color: var(--brutal-black) !important;
+    // }
+
+    .line-numbers {
+      color: var(--brutal-black) !important;
+      font-weight: 700 !important;
+    }
+
+    .cursor {
+      background: var(--brutal-accent-red) !important;
+      border: 1px solid var(--brutal-black) !important;
+      width: 3px !important;
+    }
+  }
+
+  .monaco-diff-editor {
+    .monaco-editor {
+      border-right: var(--brutal-border) solid var(--brutal-black);
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    .diffViewport {
+      background: var(--brutal-white) !important;
+    }
+
+    .char-insert {
+      background: var(--brutal-accent-green) !important;
+      color: var(--brutal-black) !important;
+    }
+
+    .char-delete {
+      background: var(--brutal-accent-red) !important;
+      color: var(--brutal-white) !important;
+    }
+
+    .line-insert {
+      background: rgba(0, 255, 0, 0.2) !important;
+      border-left: var(--brutal-border) solid var(--brutal-accent-green) !important;
+    }
+
+    .line-delete {
+      background: rgba(255, 0, 0, 0.2) !important;
+      border-left: var(--brutal-border) solid var(--brutal-accent-red) !important;
+    }
+  }
+
+  // Scrollbar styling for Monaco
+  .monaco-scrollable-element > .scrollbar {
+    .slider {
+      background: var(--brutal-black) !important;
+      border: 1px solid var(--brutal-accent-red) !important;
+    }
+
+    &.horizontal .slider {
+      height: 8px !important;
+    }
+
+    &.vertical .slider {
+      width: 8px !important;
+    }
   }
 }
