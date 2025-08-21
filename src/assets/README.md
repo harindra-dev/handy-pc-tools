@@ -38,10 +38,10 @@ const exists = await this.assetsService.assetExists(logoPath);
 
 ```html
 <!-- Direct path usage -->
-<img [src]="'/assets/images/logo.png'" alt="Logo">
+<img [src]="'/assets/images/logo.png'" alt="Logo" />
 
 <!-- Using service -->
-<img [src]="getImagePath('logo.png')" alt="Logo">
+<img [src]="getImagePath('logo.png')" alt="Logo" />
 ```
 
 ### In SCSS
@@ -49,19 +49,18 @@ const exists = await this.assetsService.assetExists(logoPath);
 ```scss
 // Background images
 .hero-section {
-  background-image: url('/assets/images/hero-background.jpg');
+  background-image: url("/assets/images/hero-background.jpg");
 }
 
 // Icons
 .icon-home::before {
-  content: url('/assets/icons/home.svg');
+  content: url("/assets/icons/home.svg");
 }
 
 // Custom fonts
 @font-face {
-  font-family: 'CustomFont';
-  src: url('/assets/fonts/custom-font.woff2') format('woff2'),
-       url('/assets/fonts/custom-font.woff') format('woff');
+  font-family: "CustomFont";
+  src: url("/assets/fonts/custom-font.woff2") format("woff2"), url("/assets/fonts/custom-font.woff") format("woff");
 }
 ```
 
@@ -74,23 +73,27 @@ const exists = await this.assetsService.assetExists(logoPath);
 ## Optimization Guidelines
 
 ### Icons
+
 - Use SVG format when possible for scalability
 - Optimize SVGs with tools like SVGO
 - Keep icon files under 10KB
 
 ### Images
+
 - Use WebP format for modern browsers with fallbacks
 - Compress images appropriately for their use case
 - Consider lazy loading for large images
 - Maximum recommended size: 5MB
 
 ### Fonts
+
 - Use WOFF2 format primarily for best compression
 - Include WOFF fallback for older browsers
 - Subset fonts to include only needed characters
 - Maximum recommended size: 2MB per font file
 
 ### Data Files
+
 - Minify JSON files in production
 - Keep data files under 1MB
 - Consider splitting large datasets
@@ -98,6 +101,7 @@ const exists = await this.assetsService.assetExists(logoPath);
 ## Build Process
 
 Assets are automatically copied to the `dist` folder during build:
+
 - Development: Assets served from `/assets/`
 - Production: Assets bundled and served from `/assets/`
 
@@ -106,6 +110,7 @@ All assets in this directory are included in the production build and can be ref
 ## Critical Assets
 
 Assets marked as critical in `assets.config.ts` are preloaded for better performance:
+
 - Logo images
 - Favicon
 - Essential icons
@@ -114,6 +119,7 @@ Assets marked as critical in `assets.config.ts` are preloaded for better perform
 ## Caching
 
 Assets are configured for optimal caching:
+
 - Static assets: Long-term caching (30 days)
 - Development: No caching for hot reload
 - Production: Filename hashing for cache busting
