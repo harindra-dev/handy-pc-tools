@@ -1,0 +1,106 @@
+@use "sass:math";
+@use "variables" as vars;
+
+// Mixins for common patterns
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+@mixin brutal-box {
+  border: vars.$border-width-2 solid vars.$brutal-black;
+  box-shadow: vars.$shadow-default vars.$brutal-black;
+  transition: box-shadow vars.$transition-fast, transform vars.$transition-fast;
+
+  &:hover {
+    box-shadow: vars.$shadow-hover vars.$brutal-black;
+    transform: translate(-1px, -1px);
+  }
+}
+
+@mixin brutal-button {
+  @include brutal-box;
+  padding: vars.$spacing-sm vars.$spacing-md;
+  background-color: vars.$brutal-white;
+  color: vars.$brutal-black;
+  font-family: vars.$font-family-mono;
+  font-weight: vars.$font-weight-bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1;
+  border: vars.$border-width-2 solid vars.$brutal-black;
+
+  &:hover {
+    background-color: vars.$brutal-lime-yellow;
+  }
+
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px vars.$brutal-black;
+  }
+}
+
+@mixin brutal-card {
+  @include brutal-box;
+  background-color: vars.$brutal-white;
+  padding: vars.$spacing-md;
+}
+
+@mixin brutal-section-title {
+  font-family: vars.$font-family-mono;
+  font-size: vars.$font-size-xl;
+  font-weight: vars.$font-weight-bold;
+  text-transform: uppercase;
+  margin-bottom: vars.$spacing-md;
+  letter-spacing: 1px;
+}
+
+// Performance optimized animations
+@mixin optimize-animation {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+// Responsive mixins
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: vars.$breakpoint-xs) {
+      @content;
+    }
+  } @else if $breakpoint == sm {
+    @media (max-width: vars.$breakpoint-sm) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media (max-width: vars.$breakpoint-md) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media (max-width: vars.$breakpoint-lg) {
+      @content;
+    }
+  } @else if $breakpoint == xl {
+    @media (max-width: vars.$breakpoint-xl) {
+      @content;
+    }
+  }
+}
+
+// Performance optimized box-shadow
+@mixin optimized-shadow {
+  box-shadow: $shadow-default rgba(0, 0, 0, 0.8);
+}

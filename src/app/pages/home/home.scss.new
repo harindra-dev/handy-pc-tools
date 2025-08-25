@@ -1,9 +1,9 @@
-@use "../../core/styles/variables" as vars;
-@use "../../core/styles/mixins" as mix;
+@import '../../core/styles/variables';
+@import '../../core/styles/mixins';
 
 .home-brutal {
   margin: 0 auto;
-  padding: vars.$spacing-lg;
+  padding: $spacing-lg;
   min-height: calc(100vh - 150px);
 }
 
@@ -11,75 +11,74 @@
   display: grid;
   grid-template-areas: "tools tools tools tools tools tools tools bookmarks-widget bookmarks-widget bookmarks-widget bookmarks-widget bookmarks-widget";
   grid-template-columns: repeat(12, 1fr);
-  gap: vars.$spacing-xl;
+  gap: $spacing-xl;
   align-items: start;
   will-change: transform; // Hardware acceleration
 
-  @include mix.respond-to(md) {
+  @include respond-to(md) {
     grid-template-areas:
       "tools"
       "bookmarks-widget";
     grid-template-rows: auto auto;
   }
 
-  @include mix.respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-areas:
       "tools"
       "bookmarks-widget";
     grid-template-columns: 1fr;
-    gap: vars.$spacing-lg;
+    gap: $spacing-lg;
   }
 }
 
 .home-brutal-section {
-  @include mix.flex-column;
-  gap: vars.$spacing-md;
+  @include flex-column;
+  gap: $spacing-md;
   grid-area: tools;
 }
 
 .home-brutal-section-title {
-  font-family: vars.$font-family-mono;
-  font-size: vars.$font-size-xl;
-  font-weight: vars.$font-weight-bold;
-  color: vars.$brutal-black;
+  font-family: $font-family-mono;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $brutal-black;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0;
-  border-bottom: vars.$border-width-2 solid vars.$brutal-black;
-  padding-bottom: vars.$spacing-sm;
+  border-bottom: $border-width-2 solid $brutal-black;
+  padding-bottom: $spacing-sm;
 }
 
 .tools-brutal-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: vars.$spacing-md;
+  gap: $spacing-md;
   max-width: 600px;
 }
 
 .tool-brutal-card {
-  @include mix.flex-column;
-  @include mix.brutal-box;
-  @include mix.optimize-animation;
+  @include flex-column;
+  @include brutal-box;
+  @include optimize-animation;
   align-items: center;
   justify-content: center;
-  gap: vars.$spacing-sm;
-  padding: vars.$spacing-lg;
-  background: vars.$brutal-white;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  background: $brutal-white;
   text-decoration: none;
-  color: vars.$brutal-black;
+  color: $brutal-black;
   cursor: pointer;
-  font-family: vars.$font-family-mono;
-  font-weight: vars.$font-weight-bold;
+  font-family: $font-family-mono;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
   letter-spacing: 1px;
   height: 120px;
-  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast,
-    background-color vars.$transition-fast;
+  transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast;
 
   &:hover:not(.tool-brutal-card-disabled) {
     transform: translate(-1px, -1px);
-    box-shadow: vars.$shadow-hover vars.$brutal-black;
-    background: vars.$brutal-neon-green;
+    box-shadow: $shadow-hover $brutal-black;
+    background: $brutal-neon-green;
   }
 
   &.tool-brutal-card-disabled {
@@ -88,22 +87,22 @@
 
     &:hover {
       transform: none;
-      box-shadow: vars.$shadow-default vars.$brutal-black;
+      box-shadow: $shadow-default $brutal-black;
 
       i {
-        color: vars.$brutal-black;
+        color: $brutal-black;
       }
     }
   }
 
   i {
     font-size: 2rem;
-    color: vars.$brutal-black;
-    transition: color vars.$transition-fast;
+    color: $brutal-black;
+    transition: color $transition-fast;
   }
 
   span {
-    font-size: vars.$font-size-sm;
+    font-size: $font-size-sm;
     text-align: center;
   }
 }
@@ -114,9 +113,9 @@
   padding-top: 2rem;
 }
 
-@include mix.respond-to(sm) {
+@include respond-to(sm) {
   .home-brutal {
-    padding: vars.$spacing-md;
+    padding: $spacing-md;
   }
 
   .tools-brutal-grid {
@@ -126,14 +125,14 @@
 
   .tool-brutal-card {
     height: 100px;
-    padding: vars.$spacing-md;
+    padding: $spacing-md;
 
     i {
       font-size: 1.5rem;
     }
 
     span {
-      font-size: vars.$font-size-xs;
+      font-size: $font-size-xs;
     }
   }
 }

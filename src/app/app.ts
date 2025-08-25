@@ -4,6 +4,11 @@ import { Navigation } from './components/navigation/navigation';
 import { AppUtils } from './core/services/app-utils/app-utils';
 import { SoundService } from './core/services/sound/sound.service';
 
+// For passive event listener support
+interface AddEventListenerOptions extends EventListenerOptions {
+  passive?: boolean;
+}
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, Navigation],
@@ -28,41 +33,53 @@ export class App implements OnInit {
   }
 
   private setupGlobalButtonClickListener(): void {
-    document.addEventListener('click', (event) => {
-      const target = event.target as HTMLElement;
+    // Use a single passive event listener for better performance
+    document.addEventListener(
+      'click',
+      (event) => {
+        // Skip processing if sound is disabled
+        if (!this.soundService.isSoundEnabled()) return;
 
-      // Check if the clicked element is a button or is inside a button
-      const buttonElement = target.closest('button');
-      if (buttonElement && !buttonElement.hasAttribute('no-click-sound')) {
-        this.soundService.playClickSound(0.5);
-        return; // Exit early to avoid duplicate sound
-      }
+        const target = event.target as HTMLElement;
 
-      // Check for other clickable elements like links, inputs, selects
-      const clickableElement = target.closest(
-        'a, input[type="button"], input[type="submit"], input[type="reset"], select, [role="button"]'
-      );
-      if (
-        clickableElement &&
-        !clickableElement.hasAttribute('no-click-sound')
-      ) {
-        this.soundService.playClickSound(0.5);
-        return; // Exit early to avoid duplicate sound
-      }
+        // Consolidated selector for all clickable elements
+        const clickableElement = target.closest(
+          'button, a, input[type="button"], input[type="submit"], input[type="reset"], .clickable, [role="button"]'
+        );
 
-      // Check if element has clickSound directive
-      if (target.hasAttribute('clickSound') || target.closest('[clickSound]')) {
-        // Get custom volume if specified
-        const clickSoundElement = target.hasAttribute('clickSound')
-          ? target
-          : (target.closest('[clickSound]') as HTMLElement);
-        const volume = clickSoundElement?.getAttribute('clickSoundVolume');
-        const enabled = clickSoundElement?.getAttribute('clickSoundEnabled');
+        // Handle standard clickable elements
+        if (
+          clickableElement &&
+          !clickableElement.hasAttribute('no-click-sound')
+        ) {
+          // Use volume attribute if specified
+          const volumeAttr =
+            clickableElement.getAttribute('click-sound-volume');
+          const volume = volumeAttr ? parseFloat(volumeAttr) : 0.5;
 
-        if (enabled !== 'false') {
-          this.soundService.playClickSound(volume ? parseFloat(volume) : 0.5);
+          // Play sound with throttling (implemented in SoundService)
+          this.soundService.playClickSound(volume);
+          return; // Exit early to avoid duplicate sound
         }
-      }
-    });
+
+        // Check if element has clickSound directive
+        if (
+          target.hasAttribute('clickSound') ||
+          target.closest('[clickSound]')
+        ) {
+          // Get custom volume if specified
+          const clickSoundElement = target.hasAttribute('clickSound')
+            ? target
+            : (target.closest('[clickSound]') as HTMLElement);
+          const volume = clickSoundElement?.getAttribute('clickSoundVolume');
+          const enabled = clickSoundElement?.getAttribute('clickSoundEnabled');
+
+          if (enabled !== 'false') {
+            this.soundService.playClickSound(volume ? parseFloat(volume) : 0.5);
+          }
+        }
+      },
+      { passive: true } as AddEventListenerOptions
+    );
   }
 }

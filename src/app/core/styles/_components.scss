@@ -1,0 +1,141 @@
+@use "sass:math";
+@use "variables" as vars;
+@use "mixins" as mix;
+
+// Grid system
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -#{vars.$spacing-md};
+  margin-left: -#{vars.$spacing-md};
+}
+
+.col {
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  padding-right: vars.$spacing-md;
+  padding-left: vars.$spacing-md;
+}
+
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    flex: 0 0 math.percentage(math.div($i, 12));
+    max-width: math.percentage(math.div($i, 12));
+    padding-right: vars.$spacing-md;
+    padding-left: vars.$spacing-md;
+  }
+}
+
+@each $breakpoint in (sm, md, lg, xl) {
+  @include mix.respond-to($breakpoint) {
+    @for $i from 1 through 12 {
+      .col-#{$breakpoint}-#{$i} {
+        flex: 0 0 math.percentage(math.div($i, 12));
+        max-width: math.percentage(math.div($i, 12));
+      }
+    }
+  }
+}
+
+// Component Styles
+.brutal-button {
+  @include mix.brutal-button;
+}
+
+.brutal-card {
+  @include mix.brutal-card;
+}
+
+.brutal-box {
+  @include mix.brutal-box;
+}
+
+.brutal-section-title {
+  @include mix.brutal-section-title;
+}
+
+// Common page layout
+.page-container {
+  padding: vars.$spacing-lg;
+  min-height: calc(100vh - 150px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Form controls
+.form-control {
+  display: block;
+  width: 100%;
+  padding: vars.$spacing-sm;
+  font-family: vars.$font-family-main;
+  font-size: vars.$font-size-md;
+  line-height: 1.5;
+  color: vars.$brutal-black;
+  background-color: vars.$brutal-white;
+  border: vars.$border-width-2 solid vars.$brutal-black;
+  transition: border-color vars.$transition-fast,
+    box-shadow vars.$transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: vars.$brutal-neon-green;
+    box-shadow: 0 0 0 2px rgba(vars.$brutal-neon-green, 0.25);
+  }
+}
+
+.form-group {
+  margin-bottom: vars.$spacing-md;
+}
+
+.form-label {
+  display: inline-block;
+  margin-bottom: vars.$spacing-xs;
+  font-family: vars.$font-family-mono;
+  font-weight: vars.$font-weight-bold;
+}
+
+// Navigation
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: block;
+  padding: vars.$spacing-sm vars.$spacing-md;
+  text-decoration: none;
+  transition: color vars.$transition-fast;
+
+  &:hover {
+    color: vars.$brutal-neon-green;
+  }
+}
+
+// Tables
+.table {
+  width: 100%;
+  margin-bottom: vars.$spacing-lg;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: vars.$spacing-sm;
+    border-bottom: vars.$border-width-1 solid vars.$brutal-gray-light;
+    text-align: left;
+  }
+
+  th {
+    font-family: vars.$font-family-mono;
+    font-weight: vars.$font-weight-bold;
+    text-transform: uppercase;
+    background-color: vars.$brutal-gray-lightest;
+  }
+
+  tr:hover {
+    background-color: vars.$brutal-gray-lightest;
+  }
+}

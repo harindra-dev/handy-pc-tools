@@ -76,6 +76,17 @@ class HandyPCToolsApp {
 
     // Set up the menu
     this.createMenu();
+
+    // Reload when content fails to load or renderer process crashes
+    this.mainWindow.webContents.on("did-fail-load", () => {
+      console.error("[Electron] Failed to load content, reloading...");
+      this.mainWindow.loadURL(startUrl);
+    });
+
+    this.mainWindow.webContents.on("crashed", () => {
+      console.error("[Electron] Renderer process crashed, reloading...");
+      this.mainWindow.reload();
+    });
   }
 
   createMenu() {

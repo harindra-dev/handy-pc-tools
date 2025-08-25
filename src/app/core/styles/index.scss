@@ -1,0 +1,19 @@
+// Forward all design system files in the correct order
+@forward "variables";
+@forward "mixins";
+// Utilities and components should use variables, not redefine them
+@forward "utilities" hide $brutal-black;
+@forward "components";
+
+// Use modules for this file
+@use "variables" as vars;
+
+// Export as a module
+:export {
+  // Export key variables for use in TypeScript if needed
+  breakpointXs: vars.$breakpoint-xs;
+  breakpointSm: vars.$breakpoint-sm;
+  breakpointMd: vars.$breakpoint-md;
+  breakpointLg: vars.$breakpoint-lg;
+  breakpointXl: vars.$breakpoint-xl;
+}

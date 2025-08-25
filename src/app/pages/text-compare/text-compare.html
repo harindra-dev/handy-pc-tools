@@ -5,22 +5,68 @@
   </div>
 
   @if(isLoading) {
-  <div class="loading-indicator">LOADING DIFF ENGINE</div>
-  } @if(hasError) {
-  <div class="error-message">CRITICAL SYSTEM ERROR: {{ errorMessage }}</div>
-  }
-
-  <div
-    [style.display]="!isLoading && !hasError ? 'block' : 'none'"
-    class="editor-container"
-  >
-    <ngx-monaco-diff-editor
-      [options]="options"
-      [originalModel]="originalModel"
-      [modifiedModel]="modifiedModel"
-      (onInit)="onInit($event)"
-      class="diff-editor"
-    >
-    </ngx-monaco-diff-editor>
+  <div class="loading-indicator">
+    <div class="spinner"></div>
+    <div class="loading-message">LOADING DIFF ENGINE</div>
   </div>
+  } @if(hasError) {
+  <div class="loading-indicator">
+    <div class="error-message">CRITICAL SYSTEM ERROR: {{ errorMessage }}</div>
+  </div>
+  } @if(!isLoading && !hasError) {
+  <div class="editor-container">
+    <div class="editor-controls">
+      <div class="control-group">
+        <button class="brutal-button" (click)="copyOriginal()">
+          <i class="fas fa-copy"></i> Copy Original
+        </button>
+        <button class="brutal-button" (click)="copyModified()">
+          <i class="fas fa-copy"></i> Copy Modified
+        </button>
+      </div>
+      <div class="control-group">
+        <select class="brutal-select" (change)="changeLanguage($event)">
+          <option value="plaintext">Plain Text</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="json">JSON</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="editors-wrapper">
+      <div class="editor-half">
+        <div class="editor-title">ORIGINAL</div>
+        <div class="editor-wrapper">
+          <ngx-monaco-diff-editor
+            [options]="options"
+            [originalModel]="originalModel"
+            [modifiedModel]="modifiedModel"
+            (onInit)="onInit($event)"
+          >
+          </ngx-monaco-diff-editor>
+        </div>
+      </div>
+    </div>
+
+    @if(diffStats) {
+    <div class="diff-stats">
+      <div class="stat-item">
+        <div class="icon addition"></div>
+        <span>{{ diffStats.insertions }} additions</span>
+      </div>
+      <div class="stat-item">
+        <div class="icon deletion"></div>
+        <span>{{ diffStats.deletions }} deletions</span>
+      </div>
+      <div class="stat-item">
+        <div class="icon unchanged"></div>
+        <span>{{ diffStats.unchanged }} unchanged</span>
+      </div>
+    </div>
+    }
+  </div>
+  }
 </div>

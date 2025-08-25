@@ -1,0 +1,71 @@
+// Core design tokens
+$brutal-black: #000000;
+$brutal-white: #ffffff;
+$brutal-gray-dark: #1a1a1a;
+$brutal-gray-medium: #333333;
+$brutal-gray-lightest: #e1e1e1;
+$brutal-gray-light: #666666;
+$brutal-neon-green: #00ff00;
+$brutal-dark-green: #00cc00;
+$brutal-neon-red: #ff0044;
+$brutal-cyan: #00ffff;
+$brutal-magenta: #ff00ff;
+$brutal-rose: #fd4499;
+$brutal-lime-yellow: #ffe62d;
+$brutal-red: #f89b92;
+$brutal-accent-red: #ff0044;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 24px;
+$spacing-xxxl: 32px;
+
+// Borders
+$border-width-1: 1px;
+$border-width-2: 2px;
+$border-width-3: 3px;
+
+// Shadows
+$shadow-default: 3px 3px 0px;
+$shadow-hover: 4px 4px 0px;
+
+// Typography
+$font-family-main: "Inter", "Arial Black", sans-serif;
+$font-family-mono: "JetBrains Mono", monospace;
+
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$font-weight-black: 900;
+
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-xxl: 2rem;
+$font-size-xxxl: 2.5rem;
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1440px;
+
+// Animation
+$transition-fast: 0.15s ease;
+$transition-medium: 0.25s ease;
+$transition-slow: 0.4s ease;
+
+// Z-index
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;

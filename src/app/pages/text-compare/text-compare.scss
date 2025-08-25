@@ -1,124 +1,198 @@
+@use "../../core/styles/variables" as vars;
+@use "../../core/styles/mixins" as mix;
+
 .text-compare-container {
-  display: flex;
-  flex-direction: column;
+  @include mix.flex-column;
   height: calc(100vh - 150px);
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-  padding: 0 var(--brutal-spacing-md) var(--brutal-spacing-md);
+  padding: 0 vars.$spacing-md vars.$spacing-md;
   box-sizing: border-box;
-  background: var(--brutal-white);
+  background: vars.$brutal-white;
+  will-change: contents; // Hardware acceleration
 
   .text-compare-header {
-    margin-bottom: var(--brutal-spacing-md);
-    padding: var(--brutal-spacing-sm);
-    background: var(--brutal-black);
-    color: var(--brutal-white);
-    border: var(--brutal-border) solid var(--brutal-black);
+    margin-bottom: vars.$spacing-md;
+    padding: vars.$spacing-sm;
+    background: vars.$brutal-black;
+    color: vars.$brutal-white;
+    border: vars.$border-width-2 solid vars.$brutal-black;
 
     .text-compare-title {
-      font-family: "JetBrains Mono", monospace;
-      font-weight: 700;
-      font-size: 1rem;
+      font-family: vars.$font-family-mono;
+      font-weight: vars.$font-weight-bold;
+      font-size: vars.$font-size-md;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 0;
     }
 
     .text-compare-subtitle {
-      font-family: "JetBrains Mono", monospace;
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--brutal-accent-green);
+      font-family: vars.$font-family-mono;
+      font-weight: vars.$font-weight-normal;
+      font-size: vars.$font-size-xs;
+      color: vars.$brutal-neon-green;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin: var(--brutal-spacing-xs) 0 0 0;
+      margin: vars.$spacing-xs 0 0 0;
     }
   }
 
   .loading-indicator {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mix.flex-center;
+    flex-direction: column;
     height: 100%;
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--brutal-black);
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    gap: vars.$spacing-md;
 
-    &::after {
-      content: "";
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: var(--brutal-border) solid var(--brutal-black);
-      border-top: var(--brutal-border) solid var(--brutal-accent-red);
-      border-radius: 0;
-      animation: brutal-spinner 1s linear infinite;
-      margin-left: var(--brutal-spacing-md);
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(vars.$brutal-black, 0.1);
+      border-radius: 50%;
+      border-top-color: vars.$brutal-black;
+      animation: spin 1s ease infinite;
+      will-change: transform;
     }
-  }
 
-  .error-message {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color: var(--brutal-white);
-    background: var(--brutal-accent-red);
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 700;
-    font-size: 1.25rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: var(--brutal-spacing-lg);
-    border: var(--brutal-border) solid var(--brutal-black);
-    position: relative;
+    .loading-message {
+      font-family: vars.$font-family-mono;
+      font-size: vars.$font-size-sm;
+    }
 
-    &::before {
-      content: "[ERROR]";
-      position: absolute;
-      top: -12px;
-      left: var(--brutal-spacing-md);
-      background: var(--brutal-accent-red);
-      color: var(--brutal-black);
-      padding: 0 var(--brutal-spacing-sm);
-      font-size: 0.75rem;
+    .error-message {
+      padding: vars.$spacing-md;
+      background-color: rgba(vars.$brutal-neon-red, 0.1);
+      border: vars.$border-width-2 solid vars.$brutal-neon-red;
+      color: vars.$brutal-neon-red;
+      text-align: center;
+      max-width: 400px;
+      font-family: vars.$font-family-mono;
+      font-size: vars.$font-size-sm;
     }
   }
 
   .editor-container {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    height: calc(100vh - 200px);
-    min-height: 500px;
-    border: var(--brutal-border-1) solid var(--brutal-black);
-    overflow: hidden;
-    background: var(--brutal-white);
-    position: relative;
+    min-height: 0;
+    margin-bottom: vars.$spacing-md;
 
-    &::before {
-      content: "";
-      position: absolute;
-      top: var(--brutal-spacing-sm);
-      left: var(--brutal-spacing-sm);
-      right: -var(--brutal-spacing-sm);
-      bottom: -var(--brutal-spacing-sm);
-      background: var(--brutal-black);
-      z-index: -1;
+    .editor-controls {
+      @include mix.flex-row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: vars.$spacing-md;
+      margin-bottom: vars.$spacing-md;
+
+      .control-group {
+        @include mix.flex-row;
+        gap: vars.$spacing-sm;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .brutal-button {
+        @include mix.brutal-button;
+        height: 36px;
+        padding: 0 vars.$spacing-md;
+        font-size: vars.$font-size-sm;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: vars.$spacing-xs;
+
+        i {
+          font-size: vars.$font-size-md;
+        }
+      }
+
+      .brutal-select {
+        @include mix.brutal-box;
+        height: 36px;
+        background: vars.$brutal-white;
+        padding: 0 vars.$spacing-sm;
+        font-family: vars.$font-family-mono;
+        font-size: vars.$font-size-sm;
+        border: vars.$border-width-2 solid vars.$brutal-black;
+        appearance: none;
+        padding-right: 30px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0l4 4 4-4H0z' fill='%23000000'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 8px;
+      }
     }
 
-    .diff-editor {
-      width: 100%;
-      height: 100%;
-      background: var(--brutal-white);
+    .editors-wrapper {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      gap: vars.$spacing-md;
+
+      .editor-half {
+        @include mix.flex-column;
+        flex: 1;
+        min-width: 0;
+        border: vars.$border-width-2 solid vars.$brutal-black;
+
+        .editor-title {
+          padding: vars.$spacing-xs vars.$spacing-sm;
+          background: vars.$brutal-black;
+          color: vars.$brutal-white;
+          font-family: vars.$font-family-mono;
+          font-size: vars.$font-size-xs;
+          text-transform: uppercase;
+        }
+
+        .editor-wrapper {
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+
+  .diff-stats {
+    @include mix.flex-row;
+    gap: vars.$spacing-md;
+    align-items: center;
+    padding: vars.$spacing-sm;
+    border: vars.$border-width-2 solid vars.$brutal-black;
+    background: vars.$brutal-gray-lightest;
+    font-family: vars.$font-family-mono;
+    font-size: vars.$font-size-sm;
+
+    .stat-item {
+      @include mix.flex-row;
+      align-items: center;
+      gap: vars.$spacing-xs;
+
+      .icon {
+        width: 12px;
+        height: 12px;
+      }
+
+      .addition {
+        background-color: vars.$brutal-neon-green;
+      }
+
+      .deletion {
+        background-color: vars.$brutal-neon-red;
+      }
+
+      .unchanged {
+        background-color: vars.$brutal-gray-medium;
+      }
     }
   }
 }
 
-@keyframes brutal-spinner {
+// Optimized animation
+@keyframes spin {
   0% {
     transform: rotate(0deg);
   }
@@ -127,50 +201,43 @@
   }
 }
 
-// Monaco Editor brutal styling overrides
-::ng-deep {
-  ngx-monaco-diff-editor .editor-container {
-    width: 100%;
-    height: 100% !important;
-  }
-
-  // Monaco editor brutal theme overrides
+// Monaco Editor styling overrides
+:host ::ng-deep {
   .monaco-editor {
-    font-family: "JetBrains Mono", monospace !important;
+    font-family: vars.$font-family-mono !important;
 
     .monaco-editor-background {
-      background: var(--brutal-white) !important;
+      background: vars.$brutal-white !important;
     }
 
     .margin {
-      background: var(--vscode-textSeparator-foreground) !important;
+      background: rgba(vars.$brutal-gray-medium, 0.2) !important;
     }
 
     .current-line {
-      // background: var(--brutal-lime-yellow) !important;
-      border: 1px solid var(--brutal-black) !important;
+      border: 1px solid vars.$brutal-black !important;
     }
 
     .selected-text {
-      background: var(--brutal-cyan) !important;
-      color: var(--brutal-black) !important;
+      background: vars.$brutal-cyan !important;
+      color: vars.$brutal-black !important;
     }
 
     .line-numbers {
-      color: var(--brutal-black) !important;
-      font-weight: 700 !important;
+      color: vars.$brutal-black !important;
+      font-weight: vars.$font-weight-bold !important;
     }
 
     .cursor {
-      background: var(--brutal-ascent-red) !important;
-      border: 1px solid var(--brutal-black) !important;
+      background: vars.$brutal-red !important;
+      border: 1px solid vars.$brutal-black !important;
       width: 3px !important;
     }
   }
 
   .monaco-diff-editor {
     .monaco-editor {
-      border-right: var(--brutal-border) solid var(--brutal-black);
+      border-right: vars.$border-width-2 solid vars.$brutal-black;
 
       &:last-child {
         border-right: none;
@@ -178,31 +245,37 @@
     }
 
     .char-insert {
-      background: var(--brutal-neon-green) !important;
-      color: var(--brutal-black) !important;
+      background: vars.$brutal-neon-green !important;
+      color: vars.$brutal-black !important;
     }
 
     .char-delete {
-      background: var(--brutal-red) !important;
-      color: var(--brutal-white) !important;
+      background: vars.$brutal-neon-red !important;
+      color: vars.$brutal-white !important;
     }
 
     .line-insert {
-      background: rgba(0, 255, 0, 0.2) !important;
-      border-left: var(--brutal-border) solid var(--brutal-neon-green) !important;
+      background: rgba(vars.$brutal-neon-green, 0.2) !important;
+      border-left: vars.$border-width-2 solid vars.$brutal-neon-green !important;
     }
 
     .line-delete {
-      background: rgba(255, 0, 0, 0.2) !important;
-      border-left: var(--brutal-border) solid var(--brutal-accent-red) !important;
+      background: rgba(vars.$brutal-neon-red, 0.2) !important;
+      border-left: vars.$border-width-2 solid vars.$brutal-neon-red !important;
     }
   }
 
-  // Scrollbar styling for Monaco
+  // Optimized scrollbar styling
   .monaco-scrollable-element > .scrollbar {
     .slider {
-      background: var(--brutal-black) !important;
-      border: 1px solid var(--brutal-accent-red) !important;
+      background: vars.$brutal-black !important;
+      border: 1px solid vars.$brutal-neon-red !important;
+      border-radius: 0 !important;
+      transition: background-color 0.1s ease;
+
+      &:hover {
+        background: vars.$brutal-gray-dark !important;
+      }
     }
 
     &.horizontal .slider {
@@ -211,6 +284,28 @@
 
     &.vertical .slider {
       width: 8px !important;
+    }
+  }
+}
+
+// Responsive styles
+@include mix.respond-to(md) {
+  .text-compare-container {
+    padding: 0 vars.$spacing-sm vars.$spacing-sm;
+
+    .editor-container {
+      .editor-controls {
+        gap: vars.$spacing-sm;
+
+        .brutal-button {
+          font-size: vars.$font-size-xs;
+          padding: 0 vars.$spacing-sm;
+        }
+      }
+
+      .editors-wrapper {
+        flex-direction: column;
+      }
     }
   }
 }

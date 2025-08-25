@@ -1,0 +1,220 @@
+@import '../../core/styles/variables';
+@import '../../core/styles/mixins';
+
+.text-compare-container {
+  @include flex-column;
+  height: calc(100vh - 150px);
+  width: 100%;
+  max-width: 1900px;
+  margin: 0 auto;
+  padding: 0 $spacing-md $spacing-md;
+  box-sizing: border-box;
+  background: $brutal-white;
+  will-change: contents; // Hardware acceleration
+
+  .text-compare-header {
+    margin-bottom: $spacing-md;
+    padding: $spacing-sm;
+    background: $brutal-black;
+    color: $brutal-white;
+    border: $border-width-2 solid $brutal-black;
+
+    .text-compare-title {
+      font-family: $font-family-mono;
+      font-weight: $font-weight-bold;
+      font-size: $font-size-md;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .text-compare-subtitle {
+      font-family: $font-family-mono;
+      font-weight: $font-weight-normal;
+      font-size: $font-size-xs;
+      color: $brutal-neon-green;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: $spacing-xs 0 0 0;
+    }
+  }
+
+  .loading-indicator {
+    @include flex-center;
+    flex-direction: column;
+    height: 100%;
+    gap: $spacing-md;
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba($brutal-black, 0.1);
+      border-radius: 50%;
+      border-top-color: $brutal-black;
+      animation: spin 1s ease infinite;
+      will-change: transform;
+    }
+    
+    .loading-message {
+      font-family: $font-family-mono;
+      font-size: $font-size-sm;
+    }
+
+    .error-message {
+      padding: $spacing-md;
+      background-color: rgba($brutal-neon-red, 0.1);
+      border: $border-width-2 solid $brutal-neon-red;
+      color: $brutal-neon-red;
+      text-align: center;
+      max-width: 400px;
+      font-family: $font-family-mono;
+      font-size: $font-size-sm;
+    }
+  }
+
+  .editor-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin-bottom: $spacing-md;
+
+    .editor-controls {
+      @include flex-row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $spacing-md;
+      margin-bottom: $spacing-md;
+
+      .control-group {
+        @include flex-row;
+        gap: $spacing-sm;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .brutal-button {
+        @include brutal-button;
+        height: 36px;
+        padding: 0 $spacing-md;
+        font-size: $font-size-sm;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-xs;
+        
+        i {
+          font-size: $font-size-md;
+        }
+      }
+
+      .brutal-select {
+        @include brutal-box;
+        height: 36px;
+        background: $brutal-white;
+        padding: 0 $spacing-sm;
+        font-family: $font-family-mono;
+        font-size: $font-size-sm;
+        border: $border-width-2 solid $brutal-black;
+        appearance: none;
+        padding-right: 30px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0l4 4 4-4H0z' fill='%23000000'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 8px;
+      }
+    }
+
+    .editors-wrapper {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      gap: $spacing-md;
+      
+      .editor-half {
+        @include flex-column;
+        flex: 1;
+        min-width: 0;
+        border: $border-width-2 solid $brutal-black;
+
+        .editor-title {
+          padding: $spacing-xs $spacing-sm;
+          background: $brutal-black;
+          color: $brutal-white;
+          font-family: $font-family-mono;
+          font-size: $font-size-xs;
+          text-transform: uppercase;
+        }
+
+        .editor-wrapper {
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+
+  .diff-stats {
+    @include flex-row;
+    gap: $spacing-md;
+    align-items: center;
+    padding: $spacing-sm;
+    border: $border-width-2 solid $brutal-black;
+    background: $brutal-gray-lightest;
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+
+    .stat-item {
+      @include flex-row;
+      align-items: center;
+      gap: $spacing-xs;
+      
+      .icon {
+        width: 12px;
+        height: 12px;
+      }
+      
+      .addition {
+        background-color: $brutal-neon-green;
+      }
+      
+      .deletion {
+        background-color: $brutal-neon-red;
+      }
+      
+      .unchanged {
+        background-color: $brutal-gray-medium;
+      }
+    }
+  }
+}
+
+// Optimized animation
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive styles
+@include respond-to(md) {
+  .text-compare-container {
+    padding: 0 $spacing-sm $spacing-sm;
+    
+    .editor-container {
+      .editor-controls {
+        gap: $spacing-sm;
+        
+        .brutal-button {
+          font-size: $font-size-xs;
+          padding: 0 $spacing-sm;
+        }
+      }
+      
+      .editors-wrapper {
+        flex-direction: column;
+      }
+    }
+  }
+}

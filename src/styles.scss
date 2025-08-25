@@ -1,36 +1,45 @@
-// BRUTAL DESIGN SYSTEM
-// Raw, industrial, aggressive UI components
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;700;900&display=swap");
+// BRUTAL DESIGN SYSTEM - Optimized for Performance
+@use "app/core/styles/index" as ds;
+
+// Preload fonts to reduce render blocking
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;700&display=swap&display=swap");
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
 
-// BRUTAL COLOR PALETTE - NEON COLORS
+// CSS Variables for browser compatibility
 :root {
-  --brutal-black: #000000;
-  --brutal-white: #ffffff;
-  --brutal-gray-dark: #1a1a1a;
-  --brutal-gray-medium: #333333;
-  --brutal-gray-lightest: #e1e1e1;
-  --brutal-gray-light: #666666;
-  --brutal-neon-green: #00ff00;
-  --brutal-dark-green: #00cc00;
-  --brutal-neon-red: #ff0044;
-  --brutal-cyan: #00ffff;
-  --brutal-magenta: #ff00ff;
-  --brutal-rose: #fd4499;
-  --brutal-lime-yellow: #ffe62d;
-  --brutal-red: #f89b92;
-  --brutal-accent-red: #ff0044;
-  --brutal-border-1: 1px;
-  --brutal-border: 2px;
-  --brutal-border-thick: 3px;
-  --brutal-spacing-xs: 4px;
-  --brutal-spacing-sm: 8px;
-  --brutal-spacing-md: 12px;
-  --brutal-spacing-lg: 16px;
-  --brutal-spacing-xl: 20px;
-  --brutal-spacing-xxl: 24px;
-  --brutal-shadow: 3px 3px 0px;
-  --brutal-shadow-hover: 4px 4px 0px;
+  // Colors
+  --brutal-black: #{ds.$brutal-black};
+  --brutal-white: #{ds.$brutal-white};
+  --brutal-gray-dark: #{ds.$brutal-gray-dark};
+  --brutal-gray-medium: #{ds.$brutal-gray-medium};
+  --brutal-gray-lightest: #{ds.$brutal-gray-lightest};
+  --brutal-gray-light: #{ds.$brutal-gray-light};
+  --brutal-neon-green: #{ds.$brutal-neon-green};
+  --brutal-dark-green: #{ds.$brutal-dark-green};
+  --brutal-neon-red: #{ds.$brutal-neon-red};
+  --brutal-cyan: #{ds.$brutal-cyan};
+  --brutal-magenta: #{ds.$brutal-magenta};
+  --brutal-rose: #{ds.$brutal-rose};
+  --brutal-lime-yellow: #{ds.$brutal-lime-yellow};
+  --brutal-red: #{ds.$brutal-red};
+  --brutal-accent-red: #{ds.$brutal-accent-red};
+
+  // Spacing
+  --brutal-spacing-xs: #{ds.$spacing-xs};
+  --brutal-spacing-sm: #{ds.$spacing-sm};
+  --brutal-spacing-md: #{ds.$spacing-md};
+  --brutal-spacing-lg: #{ds.$spacing-lg};
+  --brutal-spacing-xl: #{ds.$spacing-xl};
+  --brutal-spacing-xxl: #{ds.$spacing-xxl};
+
+  // Borders
+  --brutal-border-1: #{ds.$border-width-1};
+  --brutal-border: #{ds.$border-width-2};
+  --brutal-border-thick: #{ds.$border-width-3};
+
+  // Shadows
+  --brutal-shadow: #{ds.$shadow-default};
+  --brutal-shadow-hover: #{ds.$shadow-hover};
 }
 
 // BRUTAL RESET & BASE STYLES
@@ -53,19 +62,25 @@ body {
 }
 
 body {
-  font-family: "Inter", "Arial Black", sans-serif;
-  font-weight: 700;
-  font-size: 16px;
+  font-family: ds.$font-family-main;
+  font-weight: ds.$font-weight-bold;
+  font-size: ds.$font-size-md;
   line-height: 1.2;
-  background: var(--brutal-white);
-  color: var(--brutal-black);
+  color: ds.$brutal-black;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("assets/images/Gradient2.svg");
+
+  // Use a lightweight background gradient instead of an image
+  // background: linear-gradient(
+  //   135deg,
+  //   ds.$brutal-white 0%,
+  //   ds.$brutal-gray-lightest 100%
+  // );
+  background-image: url("/assets/images/body-bg-3.svg");
+  background-position: center center;
+  background-repeat: no-repeat;
   background-size: cover;
-  background-position: 0 0;
-  // background-blend-mode: multiply;
 }
 
 * {

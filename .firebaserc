@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "handy-pc-tools"
-  }
+  },
+  "targets": {
+    "handy-pc-tools": {
+      "hosting": {
+        "handypctools": [
+          "handypctools"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
