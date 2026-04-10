@@ -1,26 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NgxMonacoEditorConfig } from 'ngx-monaco-editor-v2';
-
-// Type definition for Electron window
-interface ElectronWindow extends Window {
-  process?: {
-    type: string;
-  };
-}
+import { isElectronApp } from '@app/core/utils/is-electron';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MonacoConfigService {
-  private readonly isElectron = this.checkIsElectron();
-
-  /**
-   * Check if running in Electron environment
-   */
-  private checkIsElectron(): boolean {
-    const electronWindow = window as ElectronWindow;
-    return !!electronWindow?.process?.type;
-  }
+  private readonly isElectron = isElectronApp();
 
   /**
    * Get Monaco Editor configuration based on environment

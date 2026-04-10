@@ -12,36 +12,13 @@ import {
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
-import { MonacoConfigService } from './core/services/monaco/monaco-config.service';
-
-// Type definition for Electron window
-interface ElectronWindow extends Window {
-  process?: {
-    type: string;
-    versions?: {
-      electron: string;
-    };
-  };
-}
-
-/**
- * Check if running in Electron environment
- */
-function checkIsElectron(): boolean {
-  const electronWindow = window as ElectronWindow;
-  // Check multiple ways to detect Electron
-  return !!(
-    electronWindow?.process?.type ||
-    electronWindow?.process?.versions?.electron ||
-    navigator.userAgent.toLowerCase().includes('electron')
-  );
-}
+import { isElectronApp } from './core/utils/is-electron';
 
 /**
  * Get Monaco Editor configuration based on environment
  */
 function getMonacoConfig(): NgxMonacoEditorConfig {
-  const isElectron = checkIsElectron();
+  const isElectron = isElectronApp();
   const basePath = isElectron ? './assets/monaco' : '/assets/monaco';
   const vsPath = isElectron ? './assets/monaco/vs' : '/assets/monaco/vs';
 

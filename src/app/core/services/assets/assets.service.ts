@@ -1,33 +1,11 @@
 import { Injectable } from '@angular/core';
-
-// Type definition for Electron window
-interface ElectronWindow extends Window {
-  process?: {
-    type: string;
-    versions?: {
-      electron: string;
-    };
-  };
-}
+import { isElectronApp } from '@app/core/utils/is-electron';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AssetsService {
-  private readonly isElectron = this.checkIsElectron();
-
-  /**
-   * Check if running in Electron environment
-   */
-  private checkIsElectron(): boolean {
-    const electronWindow = window as ElectronWindow;
-    // Check multiple ways to detect Electron
-    return !!(
-      electronWindow?.process?.type ||
-      electronWindow?.process?.versions?.electron ||
-      navigator.userAgent.toLowerCase().includes('electron')
-    );
-  }
+  private readonly isElectron = isElectronApp();
 
   /**
    * Get the full path to an asset based on environment

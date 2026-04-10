@@ -1,25 +1,19 @@
 import {
   Component,
-  Inject,
   OnInit,
   ChangeDetectionStrategy,
   inject,
   ChangeDetectorRef,
   NgZone,
+  DestroyRef,
 } from '@angular/core';
-import {
-  MonacoEditorModule,
-  DiffEditorModel,
-  NGX_MONACO_EDITOR_CONFIG,
-  NgxMonacoEditorConfig,
-} from 'ngx-monaco-editor-v2';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MonacoEditorModule, DiffEditorModel } from 'ngx-monaco-editor-v2';
 import { editor } from 'monaco-editor';
 import { CommonModule } from '@angular/common';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { AppUtils } from '../../core/services/app-utils/app-utils';
-// Use a dynamic import to avoid TypeScript errors in browser/Electron renderer
-const ipcRenderer = (window as any).require?.('electron')?.ipcRenderer;
+import { merge, Subject } from 'rxjs';
+import { isElectronApp } from '../../core/utils/is-electron';
 
 interface DiffStats {
   insertions: number;
@@ -48,6 +42,7 @@ export class TextCompare implements OnInit {
     automaticLayout: true,
     readOnly: false,
     fontSize: 15, // Set default font size
+    cursorStyle: 'line' as const,
     minimap: {
       enabled: false,
     },
@@ -77,9 +72,9 @@ export class TextCompare implements OnInit {
   private readonly modifiedModelChange$ = new Subject<string>();
   private calculateDiffThrottled: any = null;
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
-    @Inject(NGX_MONACO_EDITOR_CONFIG)
-    private readonly monacoConfig: NgxMonacoEditorConfig,
     private readonly cdr: ChangeDetectorRef,
     private readonly zone: NgZone
   ) {}
@@ -88,26 +83,29 @@ export class TextCompare implements OnInit {
     console.log('[TextCompare] Starting Monaco initialization');
 
     // Check if we're in Electron environment
-    const isElectron = this.checkIsElectron();
+    const isElectron = isElectronApp();
 
     if (isElectron) {
       // For Electron, load Monaco manually with proper error handling
       this.loadMonacoForElectron();
     } else {
-      // For web, let ngx-monaco-editor handle it automatically
+      // For web, let ngx-monaco-editor handle it automatically.
+      // Editor is gated by !isLoading in the template; clear loading so the diff editor mounts
+      // and ngx-monaco can initialize (otherwise onInit never runs).
       console.log('[TextCompare] Using automatic Monaco loading for web');
+      this.isLoading = false;
+      this.cdr.markForCheck();
     }
 
-    // Set up the debounced model updates
-    this.originalModelChange$.pipe(debounceTime(300)).subscribe((value) => {
-      this.updateOriginalModel(value);
-      this.calculateDiffStats();
-    });
-
-    this.modifiedModelChange$.pipe(debounceTime(300)).subscribe((value) => {
-      this.updateModifiedModel(value);
-      this.calculateDiffStats();
-    });
+    // ngx-monaco-diff-editor disposes and recreates the whole editor whenever
+    // [originalModel] / [modifiedModel] inputs change — do NOT push typing updates
+    // through those bindings. Only refresh diff stats from editor content.
+    merge(this.originalModelChange$, this.modifiedModelChange$)
+      .pipe(
+        debounceTime(400),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => this.calculateDiffStats());
   }
 
   copyOriginal() {
@@ -146,30 +144,18 @@ export class TextCompare implements OnInit {
       const language = select.value;
       this.currentLanguage = language;
 
-      // Update the models with the new language
-      this.updateOriginalModel(
-        this.diffEditor.getOriginalEditor().getValue(),
-        language
-      );
-      this.updateModifiedModel(
-        this.diffEditor.getModifiedEditor().getValue(),
-        language
-      );
-
-      // Force a re-render of the editors
       const originalEditor = this.diffEditor.getOriginalEditor();
       const modifiedEditor = this.diffEditor.getModifiedEditor();
+      const monacoGlobal = (window as { monaco?: { editor: { setModelLanguage: (m: editor.ITextModel, id: string) => void } } }).monaco;
 
-      if (originalEditor.getModel() && modifiedEditor.getModel()) {
-        (window as any).monaco.editor.setModelLanguage(
-          originalEditor.getModel()!,
-          language
-        );
-        (window as any).monaco.editor.setModelLanguage(
-          modifiedEditor.getModel()!,
-          language
-        );
+      if (originalEditor.getModel() && modifiedEditor.getModel() && monacoGlobal?.editor) {
+        monacoGlobal.editor.setModelLanguage(originalEditor.getModel()!, language);
+        monacoGlobal.editor.setModelLanguage(modifiedEditor.getModel()!, language);
       }
+
+      // Keep bound models in sync for display without replacing inputs (would recreate editor)
+      this.originalModel.language = language;
+      this.modifiedModel.language = language;
     }
   }
 
@@ -192,50 +178,11 @@ export class TextCompare implements OnInit {
         return;
       }
 
-      // Use Monaco's built-in diff algorithm
+      // Monaco 0.39+ no longer exposes editor.DiffComputer; use line LCS stats instead.
       this.zone.runOutsideAngular(() => {
-        const monacoInstance = (window as any).monaco;
-
-        if (!monacoInstance?.editor) {
-          console.error(
-            '[TextCompare] Monaco editor not available for diff calculation'
-          );
-          return;
-        }
-
-        const diffComputer = new monacoInstance.editor.DiffComputer(
-          originalText.split('\n'),
-          modifiedText.split('\n'),
-          { maxComputationTime: 1000 }
-        );
-
-        const diffResult = diffComputer.computeDiff();
-
-        let insertions = 0;
-        let deletions = 0;
-        let unchanged = 0;
-
-        // Calculate stats from diff result
-        diffResult.changes.forEach((change: any) => {
-          if (change.originalLength > 0) {
-            deletions += change.originalLength;
-          }
-          if (change.modifiedLength > 0) {
-            insertions += change.modifiedLength;
-          }
-        });
-
-        // Calculate unchanged lines
-        const originalLines = originalText.split('\n').length;
-        const modifiedLines = modifiedText.split('\n').length;
-        unchanged =
-          Math.min(originalLines, modifiedLines) - (insertions + deletions);
-
-        // Ensure unchanged is never negative
-        unchanged = Math.max(0, unchanged);
-
+        const stats = this.computeLineDiffStats(originalText, modifiedText);
         this.zone.run(() => {
-          this.diffStats = { insertions, deletions, unchanged };
+          this.diffStats = stats;
           this.cdr.markForCheck();
         });
       });
@@ -331,11 +278,23 @@ export class TextCompare implements OnInit {
       }
 
       let baseUri = document.baseURI || window.location.href;
-      if (this.checkIsElectron()) {
-        // Use Electron's require to access path module
-        const path = window.require('path');
-        const appPath = ipcRenderer.sendSync('get-app-path');
-        baseUri = path.join('file://', appPath, 'dist/handy-pc-tools/browser');
+      if (isElectronApp()) {
+        try {
+          const w = window as Window & { require?: (m: string) => unknown };
+          const pathMod = w.require?.('path') as
+            | { join: (...p: string[]) => string }
+            | undefined;
+          const ipc = w.require?.('electron') as
+            | { ipcRenderer?: { sendSync: (c: string) => string } }
+            | undefined;
+          const ipcRenderer = ipc?.ipcRenderer;
+          if (pathMod && ipcRenderer) {
+            const appPath = ipcRenderer.sendSync('get-app-path');
+            baseUri = pathMod.join('file://', appPath, 'dist/handy-pc-tools/browser');
+          }
+        } catch {
+          // Packaged app path resolution unavailable (e.g. sandboxed renderer); use page base URI
+        }
       }
 
       const monacoBase = new URL('assets/monaco', baseUri).href;
@@ -375,28 +334,33 @@ export class TextCompare implements OnInit {
     }
   }
 
-  private checkIsElectron(): boolean {
-    const electronWindow = window as any;
-    return !!(
-      electronWindow?.process?.type ||
-      electronWindow?.process?.versions?.electron ||
-      navigator.userAgent.toLowerCase().includes('electron')
-    );
-  }
-
-  private updateOriginalModel(value: string, language?: string) {
-    this.originalModel = {
-      ...this.originalModel,
-      code: value,
-      language: language || this.originalModel.language,
-    };
-  }
-
-  private updateModifiedModel(value: string, language?: string) {
-    this.modifiedModel = {
-      ...this.modifiedModel,
-      code: value,
-      language: language || this.modifiedModel.language,
+  /** Line-based LCS approximation for diff stats (replaces removed Monaco DiffComputer). */
+  private computeLineDiffStats(originalText: string, modifiedText: string): DiffStats {
+    const ol = originalText.length ? originalText.split('\n') : [];
+    const ml = modifiedText.length ? modifiedText.split('\n') : [];
+    const n = ol.length;
+    const m = ml.length;
+    if (n === 0 && m === 0) {
+      return { insertions: 0, deletions: 0, unchanged: 0 };
+    }
+    const dp: number[] = Array(m + 1).fill(0);
+    for (let i = 1; i <= n; i++) {
+      let prev = 0;
+      for (let j = 1; j <= m; j++) {
+        const cur = dp[j];
+        if (ol[i - 1] === ml[j - 1]) {
+          dp[j] = prev + 1;
+        } else {
+          dp[j] = Math.max(dp[j], dp[j - 1]);
+        }
+        prev = cur;
+      }
+    }
+    const unchanged = dp[m];
+    return {
+      insertions: m - unchanged,
+      deletions: n - unchanged,
+      unchanged,
     };
   }
 
@@ -430,6 +394,11 @@ export class TextCompare implements OnInit {
       this.isLoading = false;
       this.hasError = false;
       this.cdr.markForCheck();
+
+      // Host height overrides apply after first paint; relayout so Monaco fills flex area
+      requestAnimationFrame(() => {
+        this.diffEditor?.layout();
+      });
     } catch (error) {
       this.handleError('An error occurred while initializing the editor');
       console.error('Editor initialization error:', error);

@@ -3,17 +3,18 @@
 
 .text-compare-container {
   @include mix.flex-column;
+  gap: vars.$spacing-md;
   height: calc(100vh - 150px);
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-  padding: 0 vars.$spacing-md vars.$spacing-md;
+  padding: vars.$spacing-md;
   box-sizing: border-box;
   background: vars.$brutal-white;
   will-change: contents; // Hardware acceleration
 
   .text-compare-header {
-    margin-bottom: vars.$spacing-md;
+    flex-shrink: 0;
     padding: vars.$spacing-sm;
     background: vars.$brutal-black;
     color: vars.$brutal-white;
@@ -75,9 +76,8 @@
   .editor-container {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
-    margin-bottom: vars.$spacing-md;
 
     .editor-controls {
       @include mix.flex-row;
@@ -86,6 +86,7 @@
       flex-wrap: wrap;
       gap: vars.$spacing-md;
       margin-bottom: vars.$spacing-md;
+      flex-shrink: 0;
 
       .control-group {
         @include mix.flex-row;
@@ -139,6 +140,7 @@
         border: vars.$border-width-2 solid vars.$brutal-black;
 
         .editor-title {
+          flex-shrink: 0;
           padding: vars.$spacing-xs vars.$spacing-sm;
           background: vars.$brutal-black;
           color: vars.$brutal-white;
@@ -148,7 +150,9 @@
         }
 
         .editor-wrapper {
-          flex: 1;
+          display: flex;
+          flex-direction: column;
+          flex: 1 1 auto;
           min-height: 0;
           overflow: hidden;
         }
@@ -157,6 +161,7 @@
   }
 
   .diff-stats {
+    flex-shrink: 0;
     @include mix.flex-row;
     gap: vars.$spacing-md;
     align-items: center;
@@ -203,6 +208,28 @@
 
 // Monaco Editor styling overrides
 :host ::ng-deep {
+  // ngx-monaco-diff-editor ships :host { height: 200px } — stretch to fill .editor-wrapper
+  .editor-wrapper ngx-monaco-diff-editor {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .editor-wrapper ngx-monaco-diff-editor .editor-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+  }
+
+  .editor-wrapper .monaco-diff-editor {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
   .monaco-editor {
     font-family: vars.$font-family-mono !important;
 
@@ -228,10 +255,13 @@
       font-weight: vars.$font-weight-bold !important;
     }
 
+    // Solid line caret — border + wide width looked like a hollow box
     .cursor {
-      background: vars.$brutal-red !important;
-      border: 1px solid vars.$brutal-black !important;
-      width: 3px !important;
+      background: vars.$brutal-black !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      width: 2px !important;
     }
   }
 
@@ -269,7 +299,7 @@
   .monaco-scrollable-element > .scrollbar {
     .slider {
       background: vars.$brutal-black !important;
-      border: 1px solid vars.$brutal-neon-red !important;
+      border: none !important;
       border-radius: 0 !important;
       transition: background-color 0.1s ease;
 
@@ -291,7 +321,8 @@
 // Responsive styles
 @include mix.respond-to(md) {
   .text-compare-container {
-    padding: 0 vars.$spacing-sm vars.$spacing-sm;
+    padding: vars.$spacing-sm;
+    gap: vars.$spacing-sm;
 
     .editor-container {
       .editor-controls {
